@@ -1,5 +1,5 @@
 <script setup>
-const mascoteSrc = '/images/mascote-conectar-enem.jpeg'
+const mascoteSrc = '/images/mascote-conectar-enem.png'
 </script>
 
 <template>
