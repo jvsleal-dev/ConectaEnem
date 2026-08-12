@@ -1,13 +1,7 @@
 <script setup>
 import { useAuth } from '~/composables/useAuth'
-const props = defineProps({
-  isTeacher: {
-    type: Boolean,
-    default: false
-  }
-})
 
-const { login } = useAuth()
+const { loginAdmin } = useAuth()
 
 const form = reactive({
   email: '',
@@ -18,49 +12,17 @@ const showPassword = ref(false)
 const loading = ref(false)
 const error = ref('')
 
-const title = computed(() => {
-  return props.isTeacher
-    ? 'Entrar como professor'
-    : 'Entrar na sua conta'
-})
-
-const description = computed(() => {
-  return props.isTeacher
-    ? 'Acesse sua área de professor de redação.'
-    : 'Continue sua preparação para o ENEM.'
-})
-
-const buttonText = computed(() => {
-  if (loading.value) {
-    return 'Entrando...'
-  }
-
-  return props.isTeacher
-    ? 'Entrar como professor'
-    : 'Entrar'
-})
-
 async function handleSubmit() {
   error.value = ''
   loading.value = true
 
   try {
-    const role = props.isTeacher
-      ? 'TEACHER'
-      : 'STUDENT'
-
-    await login({
+    await loginAdmin({
       email: form.email.trim().toLowerCase(),
-      password: form.password,
-      role
+      password: form.password
     })
 
-    if (role === 'TEACHER') {
-      await navigateTo('/professor')
-      return
-    }
-
-    await navigateTo('/aluno')
+    await navigateTo('/admin')
   }
   catch (err) {
     const statusCode =
@@ -73,9 +35,9 @@ async function handleSubmit() {
     }
 
     if (statusCode === 403) {
-      error.value = props.isTeacher
-        ? 'Esta conta não possui acesso como professor.'
-        : 'Esta conta não possui acesso como aluno.'
+      error.value =
+        err?.data?.statusMessage ||
+        'Esta conta não possui acesso administrativo.'
 
       return
     }
@@ -83,7 +45,7 @@ async function handleSubmit() {
     error.value =
       err?.data?.statusMessage ||
       err?.statusMessage ||
-      'Não foi possível entrar. Tente novamente.'
+      'Não foi possível realizar o login.'
   }
   finally {
     loading.value = false
@@ -96,39 +58,37 @@ async function handleSubmit() {
     class="space-y-5"
     @submit.prevent="handleSubmit"
   >
-    <!-- Título -->
     <div>
       <div
-        v-if="isTeacher"
         class="mb-4 inline-flex rounded-full bg-purple-50 px-3 py-1.5 text-xs font-bold text-[var(--color-primary)]"
       >
-        Professor de Redação
+        Área Administrativa
       </div>
 
       <h1
         class="text-2xl font-black tracking-tight text-zinc-900 sm:text-3xl"
       >
-        {{ title }}
+        Acesso administrativo
       </h1>
 
       <p
         class="mt-2 text-sm leading-6 text-zinc-500"
       >
-        {{ description }}
+        Entre com sua conta para gerenciar o conteúdo do Conectar ENEM.
       </p>
     </div>
 
     <!-- Email -->
     <div class="space-y-2">
       <label
-        for="login-email"
+        for="admin-email"
         class="text-sm font-semibold text-zinc-700"
       >
         Email
       </label>
 
       <input
-        id="login-email"
+        id="admin-email"
         v-model="form.email"
         type="email"
         autocomplete="email"
@@ -140,18 +100,16 @@ async function handleSubmit() {
 
     <!-- Senha -->
     <div class="space-y-2">
-      <div class="flex items-center justify-between">
-        <label
-          for="login-password"
-          class="text-sm font-semibold text-zinc-700"
-        >
-          Senha
-        </label>
-      </div>
+      <label
+        for="admin-password"
+        class="text-sm font-semibold text-zinc-700"
+      >
+        Senha
+      </label>
 
       <div class="relative">
         <input
-          id="login-password"
+          id="admin-password"
           v-model="form.password"
           :type="showPassword ? 'text' : 'password'"
           autocomplete="current-password"
@@ -178,28 +136,28 @@ async function handleSubmit() {
       {{ error }}
     </div>
 
-    <!-- Botão -->
+    <!-- Entrar -->
     <button
       type="submit"
       :disabled="loading"
       class="w-full rounded-xl bg-[var(--color-primary)] px-5 py-3.5 font-bold text-white shadow-lg shadow-purple-500/20 transition hover:-translate-y-0.5 hover:bg-[var(--color-primary-dark)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
     >
-      {{ buttonText }}
+      {{ loading ? 'Entrando...' : 'Entrar' }}
     </button>
 
-    <!-- Cadastro somente para aluno -->
-    <p
-      v-if="!isTeacher"
-      class="text-center text-sm text-zinc-500"
+    <!-- Recuperar senha -->
+    <NuxtLink
+      to="/acesso-admin/recuperar-senha"
+      class="block text-center text-sm font-semibold text-[var(--color-primary)] transition hover:text-[var(--color-primary-dark)]"
     >
-      Ainda não possui uma conta?
+      Esqueci minha senha
+    </NuxtLink>
 
-      <NuxtLink
-        to="/cadastro"
-        class="font-bold text-[var(--color-primary)] transition hover:text-[var(--color-primary-dark)]"
-      >
-        Criar conta
-      </NuxtLink>
-    </p>
+    <NuxtLink
+      to="/"
+      class="block text-center text-sm text-zinc-500 transition hover:text-zinc-800"
+    >
+      Voltar para o Conectar ENEM
+    </NuxtLink>
   </form>
 </template>

@@ -14,16 +14,93 @@ enum Role {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  authId    String?  @unique @map("auth_id")
+  id        String  @id @default(uuid())
+  authId    String  @unique @map("auth_id")
   name      String
-  email     String   @unique
-  role      Role     @default(STUDENT)
-  avatarUrl String?  @map("avatar_url")
-  active    Boolean  @default(true)
+  email     String  @unique
+  role      Role    @default(STUDENT)
+  avatarUrl String? @map("avatar_url")
+  active    Boolean @default(true)
+
+  teacherProfile TeacherProfile?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@index([role])
+  @@index([active])
   @@map("users")
+}
+
+model TeacherProfile {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("teacher_profiles")
+}
+
+model Subject {
+  id          String  @id @default(uuid())
+  name        String
+  slug        String  @unique
+  description String?
+  order       Int     @default(0)
+  active      Boolean @default(true)
+
+  modules Module[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([active])
+  @@index([order])
+  @@map("subjects")
+}
+
+model Module {
+  id          String  @id @default(uuid())
+  subjectId   String  @map("subject_id")
+  name        String
+  slug        String
+  description String?
+  order       Int     @default(0)
+  active      Boolean @default(true)
+
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  lessons Lesson[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([subjectId, slug])
+  @@index([subjectId])
+  @@index([active])
+  @@index([order])
+  @@map("modules")
+}
+
+model Lesson {
+  id          String  @id @default(uuid())
+  moduleId    String  @map("module_id")
+  title       String
+  description String?
+  videoUrl    String? @map("video_url")
+  order       Int     @default(0)
+  active      Boolean @default(true)
+
+  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([moduleId])
+  @@index([active])
+  @@index([order])
+  @@map("lessons")
 }

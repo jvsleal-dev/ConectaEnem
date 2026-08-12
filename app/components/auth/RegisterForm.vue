@@ -1,16 +1,17 @@
 <script setup>
+import { useAuth } from '~/composables/useAuth'
 const props = defineProps({
   accountType: {
     type: String,
     required: true,
-
-    validator(value) {
-      return ['STUDENT', 'TEACHER'].includes(value)
-    }
+    validator: value => ['STUDENT', 'TEACHER'].includes(value)
   }
 })
 
-const emit = defineEmits(['submit'])
+const {
+  registerStudent,
+  registerTeacher
+} = useAuth()
 
 const form = reactive({
   name: '',
@@ -22,6 +23,7 @@ const form = reactive({
 const showPassword = ref(false)
 const showPasswordConfirmation = ref(false)
 
+const loading = ref(false)
 const error = ref('')
 
 const isTeacher = computed(() => {
@@ -41,43 +43,52 @@ const description = computed(() => {
 })
 
 const buttonText = computed(() => {
+  if (loading.value) {
+    return 'Criando conta...'
+  }
+
   return isTeacher.value
     ? 'Criar conta de professor'
     : 'Criar minha conta'
 })
 
-function handleSubmit() {
+async function handleSubmit() {
   error.value = ''
-
-  const name = form.name.trim()
-  const email = form.email.trim().toLowerCase()
-
-  if (name.length < 3) {
-    error.value = 'Informe seu nome completo.'
-    return
-  }
-
-  if (!email) {
-    error.value = 'Informe seu email.'
-    return
-  }
-
-  if (form.password.length < 8) {
-    error.value = 'A senha deve possuir pelo menos 8 caracteres.'
-    return
-  }
 
   if (form.password !== form.passwordConfirmation) {
     error.value = 'As senhas não coincidem.'
     return
   }
 
-  emit('submit', {
-    name,
-    email,
-    password: form.password,
-    accountType: props.accountType
-  })
+  loading.value = true
+
+  try {
+    const payload = {
+      name: form.name.trim(),
+      email: form.email.trim().toLowerCase(),
+      password: form.password
+    }
+
+    if (isTeacher.value) {
+      await registerTeacher(payload)
+
+      await navigateTo('/professor')
+      return
+    }
+
+    await registerStudent(payload)
+
+    await navigateTo('/aluno')
+  }
+  catch (err) {
+    error.value =
+      err?.data?.statusMessage ||
+      err?.statusMessage ||
+      'Não foi possível criar sua conta.'
+  }
+  finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -86,7 +97,6 @@ function handleSubmit() {
     class="space-y-5"
     @submit.prevent="handleSubmit"
   >
-    <!-- Cabeçalho -->
     <div>
       <div
         v-if="isTeacher"
@@ -101,9 +111,7 @@ function handleSubmit() {
         {{ title }}
       </h1>
 
-      <p
-        class="mt-2 text-sm leading-6 text-zinc-500"
-      >
+      <p class="mt-2 text-sm leading-6 text-zinc-500">
         {{ description }}
       </p>
     </div>
@@ -210,14 +218,12 @@ function handleSubmit() {
       </div>
     </div>
 
-    <!-- Professor -->
     <div
       v-if="isTeacher"
       class="rounded-xl border border-purple-100 bg-purple-50 px-4 py-3"
     >
       <p class="text-sm leading-6 text-purple-800">
-        Cadastro destinado a professores de redação do
-        Conectar ENEM.
+        Cadastro destinado a professores de redação do Conectar ENEM.
       </p>
     </div>
 
@@ -232,15 +238,13 @@ function handleSubmit() {
     <!-- Submit -->
     <button
       type="submit"
-      class="w-full rounded-xl bg-[var(--color-primary)] px-5 py-3.5 font-bold text-white shadow-lg shadow-purple-500/20 transition hover:-translate-y-0.5 hover:bg-[var(--color-primary-dark)]"
+      :disabled="loading"
+      class="w-full rounded-xl bg-[var(--color-primary)] px-5 py-3.5 font-bold text-white shadow-lg shadow-purple-500/20 transition hover:-translate-y-0.5 hover:bg-[var(--color-primary-dark)] disabled:cursor-not-allowed disabled:opacity-60"
     >
       {{ buttonText }}
     </button>
 
-    <!-- Voltar ao login -->
-    <p
-      class="text-center text-sm text-zinc-500"
-    >
+    <p class="text-center text-sm text-zinc-500">
       Já possui uma conta?
 
       <NuxtLink

@@ -8,7 +8,9 @@ definePageMeta({
 
 const route = useRoute()
 
-const tipo = String(route.params.tipo || '').toLowerCase()
+const tipo = String(
+  route.params.tipo || ''
+).toLowerCase()
 
 if (tipo !== 'professor') {
   throw createError({
@@ -19,14 +21,9 @@ if (tipo !== 'professor') {
 
 useSeoMeta({
   title: 'Cadastro de Professor — Conectar ENEM',
-
   description:
     'Cadastro de professor de redação do Conectar ENEM.'
 })
-
-function handleRegister(data) {
-  console.log('Cadastro professor:', data)
-}
 </script>
 
 <template>
@@ -35,9 +32,6 @@ function handleRegister(data) {
     description="Corrija redações, envie feedbacks e acompanhe a evolução dos estudantes vinculados a você."
     footer-text="Área destinada a professores de redação."
   >
-    <RegisterForm
-      account-type="TEACHER"
-      @submit="handleRegister"
-    />
+    <RegisterForm account-type="TEACHER" />
   </AuthPanel>
 </template>

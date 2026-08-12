@@ -1,61 +1,36 @@
 import { defineStore } from 'pinia'
 
-export const useAuthStore = defineStore('auth', {
-  state: () => ({
-    user: null,
-    session: null,
-    loading: false,
-    initialized: false
-  }),
+export const useAuthStore = defineStore(
+  'auth',
+  {
+    state: () => ({
+      user: null,
+      loading: false,
+      initialized: false
+    }),
 
-  getters: {
-    isAuthenticated: (state) => {
-      return !!state.user
+    getters: {
+      isLoggedIn(state) {
+        return !!state.user
+      },
+
+      isTeacher(state) {
+        return state.user?.role === 'TEACHER'
+      },
+
+      isStudent(state) {
+        return state.user?.role === 'STUDENT'
+      }
     },
 
-    userId: (state) => {
-      return state.user?.id ?? null
-    },
+    actions: {
+      setUser(user) {
+        this.user = user
+      },
 
-    userRole: (state) => {
-      return state.user?.role ?? null
-    },
-
-    isStudent() {
-      return this.userRole === 'STUDENT'
-    },
-
-    isTeacher() {
-      return this.userRole === 'TEACHER'
-    },
-
-    isAdmin() {
-      return this.userRole === 'ADMIN'
-    }
-  },
-
-  actions: {
-    setUser(user) {
-      this.user = user
-    },
-
-    setSession(session) {
-      this.session = session
-    },
-
-    setLoading(value) {
-      this.loading = value
-    },
-
-    setInitialized(value) {
-      this.initialized = value
-    },
-
-    clearAuth() {
-      this.user = null
-      this.session = null
-      this.loading = false
-      this.initialized = false
+      clearUser() {
+        this.user = null
+      }
     }
   }
-})
+)

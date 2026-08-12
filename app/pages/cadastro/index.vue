@@ -8,14 +8,9 @@ definePageMeta({
 
 useSeoMeta({
   title: 'Criar conta — Conectar ENEM',
-
   description:
     'Crie gratuitamente sua conta de aluno no Conectar ENEM.'
 })
-
-function handleRegister(data) {
-  console.log('Cadastro aluno:', data)
-}
 </script>
 
 <template>
@@ -24,9 +19,6 @@ function handleRegister(data) {
     description="Organize seus estudos, pratique questões, faça simulados, desenvolva sua redação e acompanhe sua evolução."
     footer-text="Gratuito. Sem assinatura e sem cobrança."
   >
-    <RegisterForm
-      account-type="STUDENT"
-      @submit="handleRegister"
-    />
+    <RegisterForm account-type="STUDENT" />
   </AuthPanel>
 </template>
