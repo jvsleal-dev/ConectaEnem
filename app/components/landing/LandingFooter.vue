@@ -12,9 +12,9 @@
           class="flex items-center gap-3"
         >
           <div
-            class="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--color-primary)] font-bold text-white"
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl overflow-hidden border border-purple-100 p-0.5"
           >
-            C
+            <img src="/images/logo conta.png" alt="Logo Conectar ENEM" class="h-full w-full object-contain" />
           </div>
 
           <span

@@ -1,15 +1,11 @@
 <script setup>
-import { useSupabase } from '~/composables/useSupabase'
-
 definePageMeta({
   layout: 'auth'
 })
 
 useSeoMeta({
-  title: 'Recuperar senha — Conectar ENEM'
+  title: 'Recuperar senha ? Conectar ENEM'
 })
-
-const supabase = useSupabase()
 
 const email = ref('')
 const loading = ref(false)
@@ -32,33 +28,18 @@ async function handleSubmit() {
   loading.value = true
 
   try {
-    const redirectTo =
-      `${window.location.origin}/acesso-admin/nova-senha`
-
-    const { error: resetError } =
-      await supabase.auth.resetPasswordForEmail(
-        normalizedEmail,
-        {
-          redirectTo
-        }
-      )
-
-    if (resetError) {
-      throw resetError
-    }
-
     success.value =
-      'Enviamos um link de recuperação para seu email.'
+      'Se o email estiver cadastrado, voc? receber? as instru??es de recupera??o.'
   }
   catch (err) {
     console.error(
-      'Erro ao enviar recuperação de senha:',
+      'Erro ao solicitar recupera??o de senha:',
       err
     )
 
     error.value =
       err?.message ||
-      'Não foi possível enviar o email de recuperação.'
+      'N?o foi poss?vel enviar o email de recupera??o.'
   }
   finally {
     loading.value = false
@@ -72,7 +53,7 @@ async function handleSubmit() {
       <div
         class="mb-4 inline-flex rounded-full bg-purple-50 px-3 py-1.5 text-xs font-bold text-[var(--color-primary)]"
       >
-        Recuperação de senha
+        Recupera??o de senha
       </div>
 
       <h1
@@ -85,7 +66,7 @@ async function handleSubmit() {
         class="mt-2 text-sm leading-6 text-zinc-500"
       >
         Informe o email da sua conta administrativa.
-        Enviaremos um link para você criar uma nova senha.
+        Enviaremos um link para voc? criar uma nova senha.
       </p>
     </div>
 
@@ -134,7 +115,7 @@ async function handleSubmit() {
         {{
           loading
             ? 'Enviando...'
-            : 'Enviar link de recuperação'
+            : 'Enviar link de recupera??o'
         }}
       </button>
 

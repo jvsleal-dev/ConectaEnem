@@ -16,7 +16,7 @@ defineProps({
   }
 })
 
-const mascoteSrc = '/images/mascote-conectar-enem.png'
+const mascoteSrc = '/images/mascote-conectar-enem.png.png'
 </script>
 
 <template>
@@ -50,9 +50,9 @@ const mascoteSrc = '/images/mascote-conectar-enem.png'
           class="relative z-10 flex items-center gap-3"
         >
           <div
-            class="flex h-10 w-10 items-center justify-center rounded-xl bg-white font-black text-[var(--color-primary)]"
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl overflow-hidden bg-white/90 p-0.5 shadow-sm"
           >
-            C
+            <img src="/images/logo conta.png" alt="Logo Conectar ENEM" class="h-full w-full object-contain" />
           </div>
 
           <span class="text-lg font-black">
@@ -101,9 +101,9 @@ const mascoteSrc = '/images/mascote-conectar-enem.png'
             class="mb-8 flex items-center gap-3 lg:hidden"
           >
             <div
-              class="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-primary)] font-black text-white"
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl overflow-hidden border border-purple-200 p-0.5"
             >
-              C
+              <img src="/images/logo conta.png" alt="Logo Conectar ENEM" class="h-full w-full object-contain" />
             </div>
 
             <span
@@ -112,6 +112,14 @@ const mascoteSrc = '/images/mascote-conectar-enem.png'
               Conectar ENEM
             </span>
           </NuxtLink>
+
+          <img
+            :src="mascoteSrc"
+            alt="Mascote do Conectar ENEM"
+            width="160"
+            height="160"
+            class="mx-auto mb-6 w-32 object-contain sm:w-36 lg:hidden"
+          >
 
           <!-- Aqui entra SOMENTE o formulário -->
           <slot />

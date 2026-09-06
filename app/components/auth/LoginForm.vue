@@ -7,6 +7,7 @@ const props = defineProps({
   }
 })
 
+const route = useRoute()
 const { login } = useAuth()
 
 const form = reactive({
@@ -55,12 +56,14 @@ async function handleSubmit() {
       role
     })
 
+    const redirectUrl = route.query.redirect
+
     if (role === 'TEACHER') {
-      await navigateTo('/professor')
+      await navigateTo(redirectUrl || '/professor')
       return
     }
 
-    await navigateTo('/aluno')
+    await navigateTo(redirectUrl || '/aluno')
   }
   catch (err) {
     const statusCode =

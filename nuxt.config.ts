@@ -15,9 +15,14 @@ export default defineNuxtConfig({
   ],
 
   runtimeConfig: {
-    public: {
-      supabaseUrl: '',
-      supabasePublishableKey: ''
+    public: {}
+  },
+
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/images/logo conta.png' }
+      ]
     }
   },
 

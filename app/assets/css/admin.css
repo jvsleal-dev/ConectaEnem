@@ -1,0 +1,48 @@
+/* app/assets/css/admin.css */
+
+:root {
+  --admin-primary: #6d28d9;
+  --admin-primary-hover: #5b21b6;
+  --admin-primary-soft: #f3e8ff;
+
+  --admin-bg: #f8f8fb;
+  --admin-card: #ffffff;
+  --admin-input: #ffffff;
+
+  --admin-text: #17151d;
+  --admin-text-muted: #77727f;
+
+  --admin-border: #e9e7ee;
+}
+
+.dark {
+  --admin-primary: #a78bfa;
+  --admin-primary-hover: #8b5cf6;
+  --admin-primary-soft: rgba(139, 92, 246, 0.14);
+
+  --admin-bg: #111016;
+  --admin-card: #18171d;
+  --admin-input: #1c1b22;
+
+  --admin-text: #f5f3f7;
+  --admin-text-muted: #a8a4af;
+
+  --admin-border: #2b2932;
+}
+
+.material-symbols-rounded {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'liga';
+}

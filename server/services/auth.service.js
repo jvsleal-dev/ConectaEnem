@@ -1,8 +1,24 @@
-import { createError } from 'h3'
-
+import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto'
+import { createError, getCookie, getHeader, setCookie, deleteCookie } from 'h3'
 import prisma from '#server/utils/prisma'
-import { createSupabaseServerClient } from '#server/utils/supabase'
 
+const SESSION_COOKIE_NAME = 'better-auth.session_token'
+const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000 // 30 days
+
+function hashPassword(password) {
+  const salt = randomBytes(16).toString('hex')
+  const hash = scryptSync(password, salt, 64).toString('hex')
+  return `${salt}:${hash}`
+}
+
+function verifyPassword(password, storedPassword) {
+  if (!storedPassword || !storedPassword.includes(':')) {
+    return false
+  }
+  const [salt, originalHash] = storedPassword.split(':')
+  const hash = scryptSync(password, salt, 64).toString('hex')
+  return timingSafeEqual(Buffer.from(hash, 'hex'), Buffer.from(originalHash, 'hex'))
+}
 
 function formatUser(user) {
   return {
@@ -10,19 +26,34 @@ function formatUser(user) {
     name: user.name,
     email: user.email,
     role: user.role,
-    avatarUrl: user.avatarUrl,
+    image: user.image,
     active: user.active
   }
 }
 
+async function createSession(event, userId) {
+  const token = randomBytes(32).toString('hex')
+  const expiresAt = new Date(Date.now() + SESSION_DURATION_MS)
 
-/**
- * Cadastro de aluno ou professor.
- *
- * A role NÃO vem livremente do frontend.
- * As rotas student.post.js e teacher.post.js
- * determinam qual role será utilizada.
- */
+  await prisma.session.create({
+    data: {
+      userId,
+      token,
+      expiresAt
+    }
+  })
+
+  setCookie(event, SESSION_COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    expires: expiresAt
+  })
+
+  return token
+}
+
 export async function registerUser({
   event,
   name,
@@ -30,9 +61,7 @@ export async function registerUser({
   password,
   role
 }) {
-  const normalizedEmail = email
-    .trim()
-    .toLowerCase()
+  const normalizedEmail = email.trim().toLowerCase()
 
   const existingUser = await prisma.user.findUnique({
     where: {
@@ -40,284 +69,120 @@ export async function registerUser({
     }
   })
 
-
   if (existingUser) {
     throw createError({
       statusCode: 409,
-      statusMessage: 'Já existe uma conta com este email.'
+      statusMessage: 'J? existe uma conta com este email.'
     })
   }
 
-
-  const supabase =
-    createSupabaseServerClient(event)
-
-
-  const {
-    data,
-    error
-  } = await supabase.auth.signUp({
-    email: normalizedEmail,
-    password,
-
-    options: {
-      data: {
-        name: name.trim()
-      }
-    }
-  })
-
-
-  if (error) {
-    console.error(
-      'ERRO NO CADASTRO DO SUPABASE:',
-      {
-        message: error.message,
-        code: error.code,
-        status: error.status
-      }
-    )
-
-
-    if (
-      error.code ===
-      'user_already_exists'
-    ) {
-      throw createError({
-        statusCode: 409,
-        statusMessage:
-          'Já existe uma conta com este email.'
-      })
-    }
-
-
-    throw createError({
-      statusCode: 400,
-      statusMessage:
-        error.message ||
-        'Não foi possível criar sua conta.'
-    })
-  }
-
-
-  if (!data.user) {
-    throw createError({
-      statusCode: 400,
-      statusMessage:
-        'Não foi possível criar o usuário.'
-    })
-  }
-
+  const hashedPassword = hashPassword(password)
 
   try {
-    const user =
-      await prisma.$transaction(
-        async (tx) => {
-          const createdUser =
-            await tx.user.create({
-              data: {
-                authId: data.user.id,
-                name: name.trim(),
-                email: normalizedEmail,
-                role,
-                active: true
-              }
-            })
-
-
-          if (role === 'TEACHER') {
-            await tx.teacherProfile.create({
-              data: {
-                userId: createdUser.id
-              }
-            })
-          }
-
-
-          return createdUser
+    const user = await prisma.$transaction(async (tx) => {
+      const createdUser = await tx.user.create({
+        data: {
+          name: name.trim(),
+          email: normalizedEmail,
+          role,
+          active: true
         }
-      )
+      })
 
+      await tx.account.create({
+        data: {
+          userId: createdUser.id,
+          providerId: 'credential',
+          accountId: normalizedEmail,
+          password: hashedPassword
+        }
+      })
+
+      if (role === 'TEACHER') {
+        await tx.teacherProfile.create({
+          data: {
+            userId: createdUser.id
+          }
+        })
+      }
+
+      return createdUser
+    })
+
+    if (event) {
+      await createSession(event, user.id)
+    }
 
     return {
       success: true,
-
-      user: formatUser(user),
-
-      requiresEmailConfirmation:
-        !data.session
+      user: formatUser(user)
     }
-  }
-  catch (error) {
-    console.error(
-      'ERRO AO CRIAR PERFIL NO BANCO:',
-      error
-    )
-
-
+  } catch (error) {
+    console.error('ERRO AO CRIAR CONTA NO BANCO:', error)
     throw createError({
       statusCode: 500,
-      statusMessage:
-        'A conta foi criada, mas ocorreu um erro ao criar o perfil.'
+      statusMessage: 'Ocorreu um erro ao criar sua conta.'
     })
   }
 }
 
-
-/**
- * Login.
- *
- * O Supabase verifica email e senha.
- * Depois buscamos o usuário no nosso banco
- * para verificar:
- *
- * - se possui perfil
- * - se está ativo
- * - qual é sua role verdadeira
- */
 export async function loginUser({
   event,
   email,
   password,
   role
 }) {
-  const normalizedEmail = email
-    .trim()
-    .toLowerCase()
+  const normalizedEmail = email.trim().toLowerCase()
 
-
-  const supabase =
-    createSupabaseServerClient(event)
-
-
-  const {
-    data,
-    error
-  } =
-    await supabase.auth.signInWithPassword({
-      email: normalizedEmail,
-      password
-    })
-
-
-  /*
-   * IMPORTANTE:
-   *
-   * Este console mostra no terminal
-   * o erro REAL retornado pelo Supabase.
-   */
-  if (error) {
-    console.error(
-      'ERRO REAL DO SUPABASE:',
-      {
-        message: error.message,
-        code: error.code,
-        status: error.status
-      }
-    )
-
-
-    if (
-      error.code ===
-      'email_not_confirmed'
-    ) {
-      throw createError({
-        statusCode: 401,
-        statusMessage:
-          'Email ainda não confirmado.'
-      })
+  const user = await prisma.user.findUnique({
+    where: {
+      email: normalizedEmail
+    },
+    include: {
+      accounts: true
     }
+  })
 
-
-    if (
-      error.code ===
-      'invalid_credentials'
-    ) {
-      throw createError({
-        statusCode: 401,
-        statusMessage:
-          'Email ou senha incorretos.'
-      })
-    }
-
-
-    throw createError({
-      statusCode: 401,
-      statusMessage:
-        error.message ||
-        'Não foi possível realizar o login.'
-    })
-  }
-
-
-  if (!data.user) {
-    throw createError({
-      statusCode: 401,
-      statusMessage:
-        'Não foi possível autenticar o usuário.'
-    })
-  }
-
-
-  const user =
-    await prisma.user.findUnique({
-      where: {
-        authId: data.user.id
-      }
-    })
-
-
-  /*
-   * Supabase autenticou,
-   * mas não existe perfil no nosso banco.
-   */
   if (!user) {
-    await supabase.auth.signOut()
-
-
     throw createError({
       statusCode: 401,
-      statusMessage:
-        'Perfil do usuário não encontrado.'
+      statusMessage: 'Email ou senha incorretos.'
     })
   }
 
+  const credentialAccount = user.accounts.find(
+    (acc) => acc.providerId === 'credential'
+  )
 
-  /*
-   * Conta bloqueada/desativada.
-   */
+  if (!credentialAccount || !verifyPassword(password, credentialAccount.password)) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Email ou senha incorretos.'
+    })
+  }
+
   if (!user.active) {
-    await supabase.auth.signOut()
-
-
     throw createError({
       statusCode: 403,
-      statusMessage:
-        'Esta conta está desativada.'
+      statusMessage: 'Esta conta est? desativada.'
     })
   }
 
-
-  /*
-   * A role verdadeira vem do PostgreSQL.
-   *
-   * O seletor ALUNO/PROFESSOR da tela
-   * não concede nenhuma permissão.
-   */
   if (user.role !== role) {
-    await supabase.auth.signOut()
-
-
     throw createError({
       statusCode: 403,
-
       statusMessage:
         role === 'TEACHER'
-          ? 'Esta conta não possui acesso como professor.'
-          : 'Esta conta não possui acesso como aluno.'
+          ? 'Esta conta n?o possui acesso como professor.'
+          : role === 'ADMIN'
+            ? 'Acesso administrativo necess?rio.'
+            : 'Esta conta n?o possui acesso como aluno.'
     })
   }
 
+  if (event) {
+    await createSession(event, user.id)
+  }
 
   return {
     success: true,
@@ -325,99 +190,65 @@ export async function loginUser({
   }
 }
 
+export async function getAuthenticatedUser(event) {
+  const token =
+    getCookie(event, SESSION_COOKIE_NAME) ||
+    getCookie(event, 'auth_session') ||
+    getHeader(event, 'authorization')?.replace('Bearer ', '')
 
-/**
- * Retorna o usuário autenticado.
- *
- * getUser() consulta/valida o usuário
- * utilizando o Supabase Auth.
- */
-export async function getAuthenticatedUser(
-  event
-) {
-  const supabase =
-    createSupabaseServerClient(event)
-
-
-  const {
-    data,
-    error
-  } = await supabase.auth.getUser()
-
-
-  if (
-    error ||
-    !data.user
-  ) {
+  if (!token) {
     throw createError({
       statusCode: 401,
-      statusMessage:
-        'Usuário não autenticado.'
+      statusMessage: 'Usu?rio n?o autenticado.'
     })
   }
 
+  const session = await prisma.session.findUnique({
+    where: {
+      token
+    },
+    include: {
+      user: true
+    }
+  })
 
-  const user =
-    await prisma.user.findUnique({
-      where: {
-        authId: data.user.id
-      }
-    })
-
-
-  if (!user) {
+  if (!session || !session.user) {
     throw createError({
       statusCode: 401,
-      statusMessage:
-        'Perfil do usuário não encontrado.'
+      statusMessage: 'Usu?rio n?o autenticado.'
     })
   }
 
+  if (session.expiresAt < new Date()) {
+    await prisma.session.delete({ where: { token } }).catch(() => {})
+    deleteCookie(event, SESSION_COOKIE_NAME)
+    deleteCookie(event, 'auth_session')
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Sess?o expirada.'
+    })
+  }
 
-  if (!user.active) {
+  if (!session.user.active) {
     throw createError({
       statusCode: 403,
-      statusMessage:
-        'Esta conta está desativada.'
+      statusMessage: 'Esta conta est? desativada.'
     })
   }
 
-
-  return formatUser(user)
+  return formatUser(session.user)
 }
 
-
-/**
- * Logout.
- */
 export async function logoutUser(event) {
-  const supabase =
-    createSupabaseServerClient(event)
+  const token =
+    getCookie(event, SESSION_COOKIE_NAME) ||
+    getCookie(event, 'auth_session')
 
-
-  const {
-    error
-  } = await supabase.auth.signOut()
-
-
-  if (error) {
-    console.error(
-      'ERRO AO FAZER LOGOUT:',
-      {
-        message: error.message,
-        code: error.code,
-        status: error.status
-      }
-    )
-
-
-    throw createError({
-      statusCode: 400,
-      statusMessage:
-        'Não foi possível sair da conta.'
-    })
+  if (token) {
+    await prisma.session.delete({ where: { token } }).catch(() => {})
+    deleteCookie(event, SESSION_COOKIE_NAME)
+    deleteCookie(event, 'auth_session')
   }
-
 
   return {
     success: true

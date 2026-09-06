@@ -19,9 +19,9 @@ function closeMenu() {
         aria-label="Conectar ENEM"
       >
         <div
-          class="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-primary)] font-bold text-white shadow-sm"
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl overflow-hidden border border-purple-100 shadow-sm p-0.5"
         >
-          C
+          <img src="/images/logo conta.png" alt="Logo Conectar ENEM" class="h-full w-full object-contain" />
         </div>
 
         <span

@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
 }
 
 enum Role {
@@ -13,16 +13,36 @@ enum Role {
   ADMIN
 }
 
-model User {
-  id        String  @id @default(uuid())
-  authId    String  @unique @map("auth_id")
-  name      String
-  email     String  @unique
-  role      Role    @default(STUDENT)
-  avatarUrl String? @map("avatar_url")
-  active    Boolean @default(true)
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
 
+enum OptionLetter {
+  A
+  B
+  C
+  D
+  E
+}
+
+model User {
+  id            String  @id @default(uuid())
+  name          String
+  email         String  @unique
+  emailVerified Boolean @default(false) @map("email_verified")
+  image         String?
+  role          Role    @default(STUDENT)
+  active        Boolean @default(true)
+
+  accounts       Account[]
+  sessions       Session[]
   teacherProfile TeacherProfile?
+  classroomsLed  Classroom[]     @relation("TeacherClassrooms")
+  enrollments    ClassroomMember[]
+  essaysSubmitted Essay[]        @relation("StudentEssays")
+  essaysGraded   EssayCorrection[] @relation("TeacherCorrections")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -30,6 +50,51 @@ model User {
   @@index([role])
   @@index([active])
   @@map("users")
+}
+
+model Account {
+  id           String  @id @default(uuid())
+  userId       String  @map("user_id")
+  accountId    String  @map("account_id")
+  providerId   String  @map("provider_id")
+  password     String?
+  accessToken  String? @map("access_token")
+  refreshToken String? @map("refresh_token")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime @map("expires_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("verifications")
 }
 
 model TeacherProfile {
@@ -44,6 +109,105 @@ model TeacherProfile {
   @@map("teacher_profiles")
 }
 
+model Classroom {
+  id          String    @id @default(uuid())
+  teacherId   String    @map("teacher_id")
+  name        String
+  description String?   @db.Text
+  code        String    @unique
+  inviteToken String    @unique @default(uuid()) @map("invite_token")
+  maxStudents Int?      @map("max_students")
+  expiresAt   DateTime? @map("expires_at")
+  active      Boolean   @default(true)
+
+  teacher User              @relation("TeacherClassrooms", fields: [teacherId], references: [id], onDelete: Cascade)
+  members ClassroomMember[]
+  essays  Essay[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([teacherId])
+  @@index([code])
+  @@index([inviteToken])
+  @@index([active])
+  @@map("classrooms")
+}
+
+model ClassroomMember {
+  id          String   @id @default(uuid())
+  classroomId String   @map("classroom_id")
+  studentId   String   @map("student_id")
+  joinedAt    DateTime @default(now()) @map("joined_at")
+
+  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  student   User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([classroomId, studentId])
+  @@index([classroomId])
+  @@index([studentId])
+  @@map("classroom_members")
+}
+
+enum EssayStatus {
+  PENDING
+  CORRECTING
+  GRADED
+}
+
+model Essay {
+  id             String      @id @default(uuid())
+  studentId      String      @map("student_id")
+  classroomId    String?     @map("classroom_id")
+  title          String?
+  theme          String
+  content        String?     @db.Text
+  imageUrl       String?     @map("image_url") @db.LongText
+  submissionType String      @default("TEXT") @map("submission_type")
+  status         EssayStatus @default(PENDING)
+
+  student    User             @relation("StudentEssays", fields: [studentId], references: [id], onDelete: Cascade)
+  classroom  Classroom?       @relation(fields: [classroomId], references: [id], onDelete: SetNull)
+  correction EssayCorrection?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([studentId])
+  @@index([classroomId])
+  @@index([status])
+  @@map("essays")
+}
+
+model EssayCorrection {
+  id        String @id @default(uuid())
+  essayId   String @unique @map("essay_id")
+  teacherId String @map("teacher_id")
+
+  c1Score Int @default(0) @map("c1_score")
+  c2Score Int @default(0) @map("c2_score")
+  c3Score Int @default(0) @map("c3_score")
+  c4Score Int @default(0) @map("c4_score")
+  c5Score Int @default(0) @map("c5_score")
+  totalScore Int @default(0) @map("total_score")
+
+  c1Comment String? @db.Text @map("c1_comment")
+  c2Comment String? @db.Text @map("c2_comment")
+  c3Comment String? @db.Text @map("c3_comment")
+  c4Comment String? @db.Text @map("c4_comment")
+  c5Comment String? @db.Text @map("c5_comment")
+  generalFeedback String? @db.Text @map("general_feedback")
+
+  essay   Essay @relation(fields: [essayId], references: [id], onDelete: Cascade)
+  teacher User  @relation("TeacherCorrections", fields: [teacherId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([teacherId])
+  @@map("essay_corrections")
+}
+
 model Subject {
   id          String  @id @default(uuid())
   name        String
@@ -52,7 +216,8 @@ model Subject {
   order       Int     @default(0)
   active      Boolean @default(true)
 
-  modules Module[]
+  modules   Module[]
+  questions Question[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -71,8 +236,7 @@ model Module {
   order       Int     @default(0)
   active      Boolean @default(true)
 
-  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-
+  subject Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   lessons Lesson[]
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -103,4 +267,45 @@ model Lesson {
   @@index([active])
   @@index([order])
   @@map("lessons")
+}
+
+model Question {
+  id            String       @id @default(uuid())
+  subjectId     String       @map("subject_id")
+  title         String?
+  statement     String       @db.Text
+  explanation   String?      @db.Text
+  imageUrl      String?      @map("image_url")
+  difficulty    Difficulty
+  year          Int?
+  correctAnswer OptionLetter
+  active        Boolean      @default(true)
+
+  subject Subject          @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  options QuestionOption[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([subjectId])
+  @@index([difficulty])
+  @@index([year])
+  @@index([active])
+  @@map("questions")
+}
+
+model QuestionOption {
+  id         String       @id @default(uuid())
+  questionId String       @map("question_id")
+  letter     OptionLetter
+  text       String       @db.Text
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([questionId, letter])
+  @@index([questionId])
+  @@map("question_options")
 }

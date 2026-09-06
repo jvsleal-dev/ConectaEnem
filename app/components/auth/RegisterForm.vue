@@ -8,6 +8,8 @@ const props = defineProps({
   }
 })
 
+const route = useRoute()
+
 const {
   registerStudent,
   registerTeacher
@@ -69,16 +71,18 @@ async function handleSubmit() {
       password: form.password
     }
 
+    const redirectUrl = route.query.redirect
+
     if (isTeacher.value) {
       await registerTeacher(payload)
 
-      await navigateTo('/professor')
+      await navigateTo(redirectUrl || '/professor')
       return
     }
 
     await registerStudent(payload)
 
-    await navigateTo('/aluno')
+    await navigateTo(redirectUrl || '/aluno')
   }
   catch (err) {
     error.value =

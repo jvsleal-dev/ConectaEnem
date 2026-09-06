@@ -1,0 +1,415 @@
+﻿generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+
+enum OptionLetter {
+  A
+  B
+  C
+  D
+  E
+}
+
+
+model User {
+
+  id String @id @default(uuid())
+
+  name String
+
+  email String @unique
+
+  emailVerified Boolean @default(false) @map("email_verified")
+
+  image String?
+
+  role Role @default(STUDENT)
+
+  active Boolean @default(true)
+
+
+  accounts Account[]
+
+  sessions Session[]
+
+  teacherProfile TeacherProfile?
+
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+
+  @@index([role])
+  @@index([active])
+  @@map("users")
+}
+
+
+
+model Account {
+
+  id String @id @default(uuid())
+
+
+  userId String @map("user_id")
+
+
+  user User @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+
+  accountId String @map("account_id")
+
+  providerId String @map("provider_id")
+
+  password String?
+
+  accessToken String? @map("access_token")
+
+  refreshToken String? @map("refresh_token")
+
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+
+  @@index([userId])
+  @@map("accounts")
+}
+
+
+
+model Session {
+
+  id String @id @default(uuid())
+
+
+  userId String @map("user_id")
+
+
+  user User @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+
+  token String @unique
+
+
+  expiresAt DateTime @map("expires_at")
+
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+
+
+model Verification {
+
+  id String @id @default(uuid())
+
+
+  identifier String
+
+  value String
+
+
+  expiresAt DateTime @map("expires_at")
+
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+
+  @@map("verifications")
+}
+
+
+
+model TeacherProfile {
+
+  id String @id @default(uuid())
+
+
+  userId String @unique @map("user_id")
+
+
+  user User @relation(
+    fields: [userId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+
+  @@map("teacher_profiles")
+}
+
+
+
+model Subject {
+
+  id String @id @default(uuid())
+
+
+  name String
+
+
+  slug String @unique
+
+
+  description String?
+
+
+  order Int @default(0)
+
+
+  active Boolean @default(true)
+
+
+  modules Module[]
+
+  questions Question[]
+
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+
+  @@index([active])
+
+  @@index([order])
+
+  @@map("subjects")
+}
+
+
+
+model Module {
+
+  id String @id @default(uuid())
+
+
+  subjectId String @map("subject_id")
+
+
+  name String
+
+
+  slug String
+
+
+  description String?
+
+
+  order Int @default(0)
+
+
+  active Boolean @default(true)
+
+
+  subject Subject @relation(
+    fields: [subjectId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+
+  lessons Lesson[]
+
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+
+  @@unique([subjectId, slug])
+
+  @@index([subjectId])
+
+  @@index([active])
+
+  @@index([order])
+
+  @@map("modules")
+}
+
+
+
+model Lesson {
+
+  id String @id @default(uuid())
+
+
+  moduleId String @map("module_id")
+
+
+  title String
+
+
+  description String?
+
+
+  videoUrl String? @map("video_url")
+
+
+  order Int @default(0)
+
+
+  active Boolean @default(true)
+
+
+  module Module @relation(
+    fields: [moduleId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+
+  @@index([moduleId])
+
+  @@index([active])
+
+  @@index([order])
+
+  @@map("lessons")
+}
+
+
+
+model Question {
+
+  id String @id @default(uuid())
+
+
+  subjectId String @map("subject_id")
+
+
+  title String?
+
+
+  statement String @db.Text
+
+
+  explanation String? @db.Text
+
+
+  imageUrl String? @map("image_url")
+
+
+  difficulty Difficulty
+
+
+  year Int?
+
+
+  correctAnswer OptionLetter
+
+
+  active Boolean @default(true)
+
+
+  subject Subject @relation(
+    fields: [subjectId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+
+  options QuestionOption[]
+
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+
+  @@index([subjectId])
+
+  @@index([difficulty])
+
+  @@index([year])
+
+  @@index([active])
+
+  @@map("questions")
+}
+
+
+
+model QuestionOption {
+
+  id String @id @default(uuid())
+
+
+  questionId String @map("question_id")
+
+
+  letter OptionLetter
+
+
+  text String @db.Text
+
+
+  question Question @relation(
+    fields: [questionId],
+    references: [id],
+    onDelete: Cascade
+  )
+
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+
+  @@unique([questionId, letter])
+
+  @@index([questionId])
+
+  @@map("question_options")
+}
+

@@ -1,236 +1,417 @@
 <script setup>
-import AdminSidebarItem from '~/components/admin/AdminSidebarItem.vue'
-import { useAuth } from '~/composables/useAuth'
+const props = defineProps({
+  collapsed: {
+    type: Boolean,
+    default: false
+  },
+  mobileOpen: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const emit = defineEmits([
-  'close'
+  'toggle',
+  'close-mobile'
 ])
 
-const { logout } = useAuth()
+const route = useRoute()
+const adminNavigation = inject('adminNavigation', null)
 
-const loadingLogout = ref(false)
-
-const contentItems = [
+const navigation = [
   {
-    label: 'Matérias',
+    label: 'Dashboard',
+    icon: 'dashboard',
+    to: '/admin',
+    section: 'dashboard'
+  },
+  {
+    label: 'Matérias & Módulos',
+    icon: 'menu_book',
     to: '/admin/materias',
-    icon: '📚'
-  },
-  
-  {
-    label: 'Assuntos',
-    to: '/admin/assuntos',
-    icon: '🏷️'
+    section: 'subjects'
   },
   {
-    label: 'Aulas',
-    to: '/admin/aulas',
-    icon: '▶️'
-  },
-  {
-    label: 'Questões',
+    label: 'Banco de Questões',
+    icon: 'quiz',
     to: '/admin/questoes',
-    icon: '❓'
-  },
-  {
-    label: 'Simulados',
-    to: '/admin/simulados',
-    icon: '📝'
-  },
-  {
-    label: 'Flashcards',
-    to: '/admin/flashcards',
-    icon: '🧠'
-  },
-  {
-    label: 'Biblioteca',
-    to: '/admin/biblioteca',
-    icon: '📄'
-  },
-  {
-    label: 'Temas de redação',
-    to: '/admin/temas-redacao',
-    icon: '✍️'
+    section: 'questions'
   }
 ]
 
-const userItems = [
+const users = [
   {
     label: 'Alunos',
-    to: '/admin/alunos',
-    icon: '🎓'
-  },
-  {
-    label: 'Professores',
-    to: '/admin/professores',
-    icon: '👨‍🏫'
-  },
-  {
-    label: 'Administradores',
-    to: '/admin/administradores',
-    icon: '🛡️'
+    icon: 'school',
+    to: '/admin',
+    section: 'students'
   }
 ]
 
-async function handleLogout() {
-  if (loadingLogout.value) {
-    return
+function isActive(item) {
+  if (route.path === '/admin') {
+    if (adminNavigation?.activeSection?.value) {
+      return adminNavigation.activeSection.value === item.section
+    }
+    return item.section === 'dashboard'
+  }
+  return route.path.startsWith(item.to) && item.to !== '/admin'
+}
+
+function handleItemClick(item) {
+  if (adminNavigation && route.path === '/admin' && item.section) {
+    adminNavigation.changeSection(item.section)
   }
 
-  loadingLogout.value = true
-
-  try {
-    await logout()
-
-    await navigateTo('/acesso-admin')
-  }
-  finally {
-    loadingLogout.value = false
+  if (props.mobileOpen) {
+    emit('close-mobile')
   }
 }
 
-function closeSidebar() {
-  emit('close')
+async function handleLogout() {
+  try {
+    await $fetch('/api/auth/logout', { method: 'POST' }).catch(() => null)
+  } finally {
+    navigateTo('/login')
+  }
 }
 </script>
 
 <template>
   <aside
-    class="flex h-full w-[280px] flex-col border-r border-zinc-200 bg-white"
+    class="admin-sidebar"
+    :class="{
+      'admin-sidebar--collapsed': collapsed,
+      'admin-sidebar--mobile-open': mobileOpen
+    }"
   >
-    <!-- Logo -->
-    <div
-      class="flex h-20 items-center justify-between border-b border-zinc-100 px-5"
-    >
+    <!-- HEADER -->
+    <div class="admin-sidebar__header">
       <NuxtLink
         to="/admin"
-        class="flex items-center gap-3"
-        @click="closeSidebar"
+        class="admin-brand"
+        @click="handleItemClick({ to: '/admin', section: 'dashboard' })"
       >
-        <div
-          class="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-primary)] font-black text-white shadow-lg shadow-purple-500/20"
+        <span class="admin-brand__icon">
+          <img
+            src="/images/logo conta.png"
+            alt="Logo Conectar ENEM"
+            class="h-full w-full object-contain"
+          />
+        </span>
+
+        <span
+          v-if="!collapsed"
+          class="admin-brand__text"
         >
-          CE
-        </div>
-
-        <div>
-          <p
-            class="text-sm font-black leading-tight text-zinc-900"
-          >
-            Conectar ENEM
-          </p>
-
-          <p
-            class="mt-0.5 text-xs font-medium text-zinc-400"
-          >
-            Administração
-          </p>
-        </div>
+          <strong>Conectar ENEM</strong>
+          <small>Administração</small>
+        </span>
       </NuxtLink>
 
       <button
         type="button"
-        class="rounded-lg p-2 text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-700 lg:hidden"
-        @click="closeSidebar"
+        class="admin-sidebar__collapse"
+        :aria-label="collapsed ? 'Expandir menu' : 'Recolher menu'"
+        @click="emit('toggle')"
       >
-        ✕
+        <span class="material-symbols-rounded">
+          {{ collapsed ? 'chevron_right' : 'chevron_left' }}
+        </span>
       </button>
     </div>
 
-    <!-- Navegação -->
-    <nav
-      class="flex-1 overflow-y-auto px-4 py-5"
-    >
-      <!-- Dashboard -->
-      <AdminSidebarItem
-        label="Dashboard"
-        to="/admin"
-        icon="⌂"
-        exact
-        @click="closeSidebar"
-      />
-
-      <!-- Conteúdo -->
-      <div class="mt-7">
-        <p
-          class="mb-2 px-3 text-[11px] font-black uppercase tracking-[0.16em] text-zinc-400"
+    <!-- NAVIGATION -->
+    <nav class="admin-navigation">
+      <div class="admin-navigation__group">
+        <span
+          v-if="!collapsed"
+          class="admin-navigation__title"
         >
-          Conteúdo
-        </p>
+          CONTEÚDO
+        </span>
 
-        <div class="space-y-1">
-          <AdminSidebarItem
-            v-for="item in contentItems"
-            :key="item.to"
-            :label="item.label"
-            :to="item.to"
-            :icon="item.icon"
-            @click="closeSidebar"
-          />
-        </div>
+        <NuxtLink
+          v-for="item in navigation"
+          :key="item.label"
+          :to="item.to"
+          class="admin-nav-item"
+          :class="{
+            'admin-nav-item--active': isActive(item)
+          }"
+          :title="collapsed ? item.label : undefined"
+          @click="handleItemClick(item)"
+        >
+          <span class="material-symbols-rounded admin-nav-item__icon">
+            {{ item.icon }}
+          </span>
+
+          <span
+            v-if="!collapsed"
+            class="admin-nav-item__label"
+          >
+            {{ item.label }}
+          </span>
+        </NuxtLink>
       </div>
 
-      <!-- Usuários -->
-      <div class="mt-7">
-        <p
-          class="mb-2 px-3 text-[11px] font-black uppercase tracking-[0.16em] text-zinc-400"
+      <div class="admin-navigation__group">
+        <span
+          v-if="!collapsed"
+          class="admin-navigation__title"
         >
-          Usuários
-        </p>
+          USUÁRIOS
+        </span>
 
-        <div class="space-y-1">
-          <AdminSidebarItem
-            v-for="item in userItems"
-            :key="item.to"
-            :label="item.label"
-            :to="item.to"
-            :icon="item.icon"
-            @click="closeSidebar"
-          />
-        </div>
-      </div>
-
-      <!-- Sistema -->
-      <div class="mt-7">
-        <p
-          class="mb-2 px-3 text-[11px] font-black uppercase tracking-[0.16em] text-zinc-400"
+        <NuxtLink
+          v-for="item in users"
+          :key="item.label"
+          :to="item.to"
+          class="admin-nav-item"
+          :class="{
+            'admin-nav-item--active': isActive(item)
+          }"
+          :title="collapsed ? item.label : undefined"
+          @click="handleItemClick(item)"
         >
-          Sistema
-        </p>
+          <span class="material-symbols-rounded admin-nav-item__icon">
+            {{ item.icon }}
+          </span>
 
-        <AdminSidebarItem
-          label="Configurações"
-          to="/admin/configuracoes"
-          icon="⚙️"
-          @click="closeSidebar"
-        />
+          <span
+            v-if="!collapsed"
+            class="admin-nav-item__label"
+          >
+            {{ item.label }}
+          </span>
+        </NuxtLink>
       </div>
     </nav>
 
-    <!-- Rodapé -->
-    <div
-      class="border-t border-zinc-100 p-4"
-    >
+    <!-- FOOTER / LOGOUT -->
+    <div class="admin-sidebar__footer">
       <button
         type="button"
-        :disabled="loadingLogout"
-        class="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold text-zinc-500 transition hover:bg-red-50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+        class="admin-nav-item admin-nav-item--logout"
         @click="handleLogout"
       >
-        <span
-          class="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100"
-        >
-          ↪
+        <span class="material-symbols-rounded admin-nav-item__icon">
+          logout
         </span>
 
-        <span>
-          {{
-            loadingLogout
-              ? 'Saindo...'
-              : 'Sair'
-          }}
+        <span
+          v-if="!collapsed"
+          class="admin-nav-item__label"
+        >
+          Sair
         </span>
       </button>
     </div>
   </aside>
+
+  <!-- MOBILE OVERLAY -->
+  <Transition name="admin-overlay">
+    <button
+      v-if="mobileOpen"
+      type="button"
+      class="admin-mobile-overlay"
+      aria-label="Fechar menu"
+      @click="emit('close-mobile')"
+    ></button>
+  </Transition>
 </template>
+
+<style scoped>
+.admin-sidebar {
+  position: fixed;
+  z-index: 50;
+  inset: 0 auto 0 0;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  background: var(--admin-sidebar, #fff);
+  border-right: 1px solid var(--admin-border, #e8e5ed);
+  transition: .22s ease;
+}
+
+.admin-sidebar--collapsed {
+  width: 82px;
+}
+
+.admin-sidebar__header {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--admin-border, #e8e5ed);
+}
+
+.admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.admin-brand__icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.03);
+  flex-shrink: 0;
+  overflow: hidden;
+  padding: 2px;
+}
+
+[data-theme='dark'] .admin-brand__icon,
+.dark .admin-brand__icon {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.admin-brand__text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.admin-brand__text strong {
+  font-size: 13px;
+  color: #18181b;
+}
+
+.admin-brand__text small {
+  font-size: 10px;
+  color: #8b8794;
+}
+
+.admin-sidebar__collapse {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  color: #77717f;
+}
+
+.admin-navigation {
+  flex: 1;
+  overflow: auto;
+  padding: 18px 10px;
+}
+
+.admin-navigation__group + .admin-navigation__group {
+  margin-top: 26px;
+}
+
+.admin-navigation__title {
+  display: block;
+  padding: 0 12px 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: #aaa5b0;
+}
+
+.admin-nav-item {
+  width: 100%;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 11px;
+  margin-bottom: 3px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #625d69;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: .15s ease;
+}
+
+.admin-sidebar--collapsed .admin-nav-item {
+  justify-content: center;
+}
+
+.admin-nav-item__icon {
+  font-size: 19px;
+  color: #8b8494;
+  flex-shrink: 0;
+}
+
+.admin-nav-item:hover {
+  background: #f7f4fb;
+  color: #6d28d9;
+}
+
+.admin-nav-item:hover .admin-nav-item__icon {
+  color: #6d28d9;
+}
+
+.admin-nav-item--active {
+  background: #f3eafd;
+  color: #6d28d9;
+  font-weight: 650;
+}
+
+.admin-nav-item--active .material-symbols-rounded {
+  color: #7c3aed;
+}
+
+.admin-nav-item--logout {
+  color: #dc2626;
+}
+
+.admin-nav-item--logout:hover {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.admin-nav-item--logout:hover .admin-nav-item__icon {
+  color: #b91c1c;
+}
+
+.admin-sidebar__footer {
+  padding: 10px;
+  border-top: 1px solid var(--admin-border, #e8e5ed);
+}
+
+.admin-mobile-overlay {
+  display: none;
+}
+
+@media(max-width: 1023px) {
+  .admin-sidebar {
+    transform: translateX(-100%);
+    box-shadow: 20px 0 50px rgba(0, 0, 0, .12);
+  }
+
+  .admin-sidebar--mobile-open {
+    transform: translateX(0);
+  }
+
+  .admin-mobile-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    border: 0;
+    background: rgba(20, 16, 25, .45);
+  }
+}
+</style>

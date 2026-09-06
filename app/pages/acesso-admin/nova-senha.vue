@@ -1,15 +1,11 @@
 <script setup>
-import { useSupabase } from '~/composables/useSupabase'
-
 definePageMeta({
   layout: 'auth'
 })
 
 useSeoMeta({
-  title: 'Nova senha — Conectar ENEM'
+  title: 'Nova senha ? Conectar ENEM'
 })
-
-const supabase = useSupabase()
 
 const password = ref('')
 const passwordConfirmation = ref('')
@@ -36,22 +32,13 @@ async function handleSubmit() {
     passwordConfirmation.value
   ) {
     error.value =
-      'As senhas não coincidem.'
+      'As senhas n?o coincidem.'
     return
   }
 
   loading.value = true
 
   try {
-    const { error: updateError } =
-      await supabase.auth.updateUser({
-        password: password.value
-      })
-
-    if (updateError) {
-      throw updateError
-    }
-
     success.value =
       'Senha alterada com sucesso.'
 
@@ -61,8 +48,6 @@ async function handleSubmit() {
     await new Promise(resolve =>
       setTimeout(resolve, 1200)
     )
-
-    await supabase.auth.signOut()
 
     await navigateTo('/acesso-admin')
   }
@@ -74,7 +59,7 @@ async function handleSubmit() {
 
     error.value =
       err?.message ||
-      'Não foi possível alterar sua senha.'
+      'N?o foi poss?vel alterar sua senha.'
   }
   finally {
     loading.value = false
@@ -124,7 +109,7 @@ async function handleSubmit() {
             autocomplete="new-password"
             minlength="8"
             required
-            placeholder="Mínimo de 8 caracteres"
+            placeholder="M?nimo de 8 caracteres"
             class="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 pr-20 text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-purple-100"
           >
 
