@@ -495,7 +495,7 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <template v-else>
+    <div v-else>
       <!-- ============================================================== -->
       <!-- ETAPA 1: MENU COM DOIS BOTÕES (TEMA LIVRE / ESCOLHER TEMA) -->
       <!-- ============================================================== -->
@@ -1006,7 +1006,7 @@ onUnmounted(() => {
           </button>
         </div>
       </section>
-    </template>
+    </div>
 
     <!-- Drawer Lateral: Banco de Conectivos e Operadores Argumentativos C4 -->
     <Teleport to="body">
