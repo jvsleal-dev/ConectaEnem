@@ -97,7 +97,7 @@ async function handleLogout() {
       >
         <span class="admin-brand__icon">
           <img
-            src="/images/logo conta.png"
+            src="/images/icone mobile.png"
             alt="Logo Conectar ENEM"
             class="h-full w-full object-contain"
           />

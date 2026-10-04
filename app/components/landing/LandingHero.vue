@@ -1,4 +1,7 @@
 <script setup>
+import { usePwaInstall } from '~/composables/usePwaInstall'
+
+const { isInstalled, promptInstall } = usePwaInstall()
 </script>
 
 <template>
@@ -27,7 +30,16 @@
           <NuxtLink to="/cadastro" class="landing-primary-button shadow-lg shadow-purple-600/25">
             Começar Gratuitamente <span class="material-symbols-rounded text-lg">arrow_forward</span>
           </NuxtLink>
-          <NuxtLink to="/login" class="landing-secondary-button">
+          <button
+            v-if="!isInstalled"
+            type="button"
+            @click="promptInstall"
+            class="landing-secondary-button cursor-pointer flex items-center gap-2"
+          >
+            <span class="material-symbols-rounded text-xl text-purple-600 dark:text-purple-400">download</span>
+            <span>Baixar App</span>
+          </button>
+          <NuxtLink v-else to="/login" class="landing-secondary-button">
             Já tenho uma conta
           </NuxtLink>
         </div>
@@ -57,7 +69,7 @@
           <div class="flex items-center justify-between border-b border-zinc-100 pb-4 dark:border-zinc-800">
             <div class="flex items-center gap-3">
               <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-100 text-purple-700 font-bold p-1 dark:bg-zinc-800 dark:text-purple-400">
-                <img src="/images/logo conta.png" alt="Logo" class="h-full w-full object-contain" />
+                <img src="/images/icone mobile.png" alt="Logo" class="h-full w-full object-contain" />
               </div>
               <div>
                 <p class="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">Painel do Aluno</p>

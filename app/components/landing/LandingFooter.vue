@@ -14,7 +14,7 @@
           <div
             class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl overflow-hidden border border-purple-100 p-0.5 bg-white dark:border-zinc-800 dark:bg-zinc-900"
           >
-            <img src="/images/logo conta.png" alt="Logo Conectar ENEM" class="h-full w-full object-contain" />
+            <img src="/images/icone mobile.png" alt="Logo Conectar ENEM" class="h-full w-full object-contain" />
           </div>
 
           <span

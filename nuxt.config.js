@@ -39,9 +39,9 @@ export default defineNuxtConfig({
         { name: 'apple-mobile-web-app-title', content: 'Conectar ENEM' }
       ],
       link: [
-        { rel: 'icon', type: 'image/png', href: '/images/logo conta.png' },
+        { rel: 'icon', type: 'image/png', href: '/images/icone mobile.png' },
         { rel: 'manifest', href: '/manifest.json' },
-        { rel: 'apple-touch-icon', href: '/images/logo conta.png' }
+        { rel: 'apple-touch-icon', href: '/images/icone mobile.png' }
       ]
     }
   }
