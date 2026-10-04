@@ -79,17 +79,17 @@ function handleSave() {
         <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" @click="emit('close')"></div>
 
         <!-- Modal Box Max-Width Large -->
-        <div class="relative w-full max-w-6xl max-h-[92vh] rounded-3xl bg-white shadow-2xl flex flex-col overflow-hidden z-10">
+        <div class="relative w-full max-w-6xl max-h-[92vh] rounded-3xl bg-white shadow-2xl flex flex-col overflow-hidden z-10 dark:bg-zinc-900 dark:border dark:border-zinc-800">
           <!-- Top Header -->
-          <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4 bg-slate-50/50 shrink-0">
+          <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4 bg-slate-50/50 shrink-0 dark:border-zinc-800 dark:bg-zinc-900">
             <div class="flex items-center gap-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-purple-100 text-purple-700 font-bold">
+              <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-purple-100 text-purple-700 font-bold dark:bg-purple-950/70 dark:text-purple-300">
                 <span class="material-symbols-rounded text-xl">rate_review</span>
               </div>
               <div>
-                <h3 class="text-base font-black text-slate-900 leading-tight">Avaliação de Redação ENEM</h3>
-                <p class="text-xs text-slate-500">
-                  Aluno: <strong class="text-slate-700">{{ essay?.student?.name }}</strong> • Turma: {{ essay?.classroom?.name }}
+                <h3 class="text-base font-black text-slate-900 leading-tight dark:text-zinc-100">Avaliação de Redação ENEM</h3>
+                <p class="text-xs text-slate-500 dark:text-zinc-400">
+                  Aluno: <strong class="text-slate-700 dark:text-zinc-200">{{ essay?.student?.name }}</strong> • Turma: {{ essay?.classroom?.name }}
                 </p>
               </div>
             </div>
@@ -103,7 +103,7 @@ function handleSave() {
 
               <button
                 type="button"
-                class="h-8 w-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
+                class="h-8 w-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-zinc-800 dark:hover:text-zinc-200 transition"
                 @click="emit('close')"
               >
                 <span class="material-symbols-rounded text-xl">close</span>
@@ -115,16 +115,16 @@ function handleSave() {
           <div class="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Coluna 1: Redação do Aluno -->
             <div class="space-y-4 flex flex-col">
-              <div class="rounded-2xl bg-purple-50/60 border border-purple-100 p-4">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-purple-700">Tema Proposto</span>
-                <h4 class="text-sm font-black text-slate-900 mt-0.5">{{ essay?.theme }}</h4>
+              <div class="rounded-2xl bg-purple-50/60 border border-purple-100 p-4 dark:bg-purple-950/20 dark:border-purple-900/40">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300">Tema Proposto</span>
+                <h4 class="text-sm font-black text-slate-900 mt-0.5 dark:text-zinc-100">{{ essay?.theme }}</h4>
               </div>
 
-              <div class="flex-1 rounded-2xl border border-slate-200 bg-slate-50/30 p-5 overflow-y-auto">
-                <h5 v-if="essay?.title" class="text-center font-bold text-slate-800 mb-4 text-sm underline decoration-purple-300">
+              <div class="flex-1 rounded-2xl border border-slate-200 bg-slate-50/30 p-5 overflow-y-auto dark:border-zinc-800 dark:bg-zinc-950/60">
+                <h5 v-if="essay?.title" class="text-center font-bold text-slate-800 mb-4 text-sm underline decoration-purple-300 dark:text-zinc-100">
                   {{ essay.title }}
                 </h5>
-                <div class="prose prose-sm max-w-none text-slate-700 font-serif leading-relaxed whitespace-pre-wrap select-text text-sm">
+                <div class="prose prose-sm max-w-none text-slate-700 font-serif leading-relaxed whitespace-pre-wrap select-text text-sm dark:text-zinc-200">
                   {{ essay?.content }}
                 </div>
               </div>
@@ -135,14 +135,14 @@ function handleSave() {
               <div
                 v-for="comp in competencies"
                 :key="comp.id"
-                class="rounded-2xl border border-slate-200 bg-white p-4 space-y-2.5 shadow-2xs"
+                class="rounded-2xl border border-slate-200 bg-white p-4 space-y-2.5 shadow-2xs dark:border-zinc-800 dark:bg-zinc-900/90"
               >
                 <div class="flex items-center justify-between">
                   <div>
-                    <h5 class="text-xs font-black text-slate-900">{{ comp.title }}</h5>
-                    <p class="text-[11px] text-slate-400">{{ comp.desc }}</p>
+                    <h5 class="text-xs font-black text-slate-900 dark:text-zinc-100">{{ comp.title }}</h5>
+                    <p class="text-[11px] text-slate-400 dark:text-zinc-500">{{ comp.desc }}</p>
                   </div>
-                  <span class="text-xs font-black text-purple-700 bg-purple-50 px-2 py-0.5 rounded-lg">
+                  <span class="text-xs font-black text-purple-700 bg-purple-50 px-2 py-0.5 rounded-lg dark:bg-purple-950/60 dark:text-purple-300">
                     {{ form[comp.key] }} pts
                   </span>
                 </div>
@@ -155,7 +155,7 @@ function handleSave() {
                     type="button"
                     @click="form[comp.key] = score"
                     class="flex-1 py-1 rounded-xl text-xs font-bold transition text-center"
-                    :class="form[comp.key] === score ? 'bg-purple-600 text-white font-black shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                    :class="form[comp.key] === score ? 'bg-purple-600 text-white font-black shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700'"
                   >
                     {{ score }}
                   </button>
@@ -166,30 +166,30 @@ function handleSave() {
                   v-model="form[comp.commentKey]"
                   rows="1"
                   placeholder="Feedback específico para esta competência (opcional)..."
-                  class="w-full rounded-xl border border-slate-200 p-2.5 text-xs text-slate-700 outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600/20 transition resize-none"
+                  class="w-full rounded-xl border border-slate-200 p-2.5 text-xs text-slate-700 outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600/20 transition resize-none dark:bg-zinc-950 dark:border-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-600"
                 ></textarea>
               </div>
 
               <!-- Comentário Geral / Orientações -->
-              <div class="rounded-2xl border border-slate-200 bg-white p-4 space-y-1.5 shadow-2xs">
-                <label class="block text-xs font-black text-slate-900">
+              <div class="rounded-2xl border border-slate-200 bg-white p-4 space-y-1.5 shadow-2xs dark:border-zinc-800 dark:bg-zinc-900/90">
+                <label class="block text-xs font-black text-slate-900 dark:text-zinc-100">
                   Parecer Geral & Dicas para o Aluno
                 </label>
                 <textarea
                   v-model="form.generalFeedback"
                   rows="3"
                   placeholder="Escreva orientações gerais, pontos fortes e o que melhorar no próximo texto..."
-                  class="w-full rounded-xl border border-slate-200 p-3 text-xs text-slate-700 outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600/20 transition"
+                  class="w-full rounded-xl border border-slate-200 p-3 text-xs text-slate-700 outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600/20 transition dark:bg-zinc-950 dark:border-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-600"
                 ></textarea>
               </div>
             </div>
           </div>
 
           <!-- Footer Ações -->
-          <div class="border-t border-slate-100 p-4 px-6 bg-slate-50/50 flex items-center justify-between shrink-0">
+          <div class="border-t border-slate-100 p-4 px-6 bg-slate-50/50 flex items-center justify-between shrink-0 dark:border-zinc-800 dark:bg-zinc-900">
             <button
               type="button"
-              class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition"
+              class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800 transition"
               @click="emit('close')"
             >
               Cancelar

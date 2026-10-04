@@ -57,7 +57,9 @@
 }
 
 
-.student-shell[data-theme='dark'] {
+.student-shell[data-theme='dark'],
+html.dark,
+[data-theme='dark'] {
   --student-bg: #09090b;
 
   --student-surface: #18181b;

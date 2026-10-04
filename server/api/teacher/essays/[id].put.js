@@ -30,12 +30,35 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const c1Score = Math.max(0, Math.min(200, parseInt(body.c1Score || 0, 10)))
-  const c2Score = Math.max(0, Math.min(200, parseInt(body.c2Score || 0, 10)))
-  const c3Score = Math.max(0, Math.min(200, parseInt(body.c3Score || 0, 10)))
-  const c4Score = Math.max(0, Math.min(200, parseInt(body.c4Score || 0, 10)))
-  const c5Score = Math.max(0, Math.min(200, parseInt(body.c5Score || 0, 10)))
+  const c1Score = Math.max(0, Math.min(200, parseInt(body.c1Score ?? 0, 10)))
+  const c2Score = Math.max(0, Math.min(200, parseInt(body.c2Score ?? 0, 10)))
+  const c3Score = Math.max(0, Math.min(200, parseInt(body.c3Score ?? 0, 10)))
+  const c4Score = Math.max(0, Math.min(200, parseInt(body.c4Score ?? 0, 10)))
+  const c5Score = Math.max(0, Math.min(200, parseInt(body.c5Score ?? 0, 10)))
   const totalScore = c1Score + c2Score + c3Score + c4Score + c5Score
+
+  const correctionData = {
+    c1Score,
+    c2Score,
+    c3Score,
+    c4Score,
+    c5Score,
+    totalScore,
+    c1Comment: body.c1Comment || null,
+    c2Comment: body.c2Comment || null,
+    c3Comment: body.c3Comment || null,
+    c4Comment: body.c4Comment || null,
+    c5Comment: body.c5Comment || null,
+    justification1: body.justification1 || body.c1Comment || null,
+    justification2: body.justification2 || body.c2Comment || null,
+    justification3: body.justification3 || body.c3Comment || null,
+    justification4: body.justification4 || body.c4Comment || null,
+    justification5: body.justification5 || body.c5Comment || null,
+    positivePoints: body.positivePoints || null,
+    improvements: body.improvements || null,
+    generalComment: body.generalComment || body.generalFeedback || null,
+    generalFeedback: body.generalFeedback || body.generalComment || null
+  }
 
   // Upsert na correção
   const correction = await prisma.essayCorrection.upsert({
@@ -43,39 +66,18 @@ export default defineEventHandler(async (event) => {
     create: {
       essayId: essay.id,
       teacherId: teacher.id,
-      c1Score,
-      c2Score,
-      c3Score,
-      c4Score,
-      c5Score,
-      totalScore,
-      c1Comment: body.c1Comment || null,
-      c2Comment: body.c2Comment || null,
-      c3Comment: body.c3Comment || null,
-      c4Comment: body.c4Comment || null,
-      c5Comment: body.c5Comment || null,
-      generalFeedback: body.generalFeedback || null
+      ...correctionData
     },
     update: {
-      c1Score,
-      c2Score,
-      c3Score,
-      c4Score,
-      c5Score,
-      totalScore,
-      c1Comment: body.c1Comment || null,
-      c2Comment: body.c2Comment || null,
-      c3Comment: body.c3Comment || null,
-      c4Comment: body.c4Comment || null,
-      c5Comment: body.c5Comment || null,
-      generalFeedback: body.generalFeedback || null
+      ...correctionData
     }
   })
 
-  // Atualizar status da redação para GRADED
+  // Se o body indicar status ou se for finalização
+  const newStatus = body.status || 'GRADED'
   await prisma.essay.update({
     where: { id: essay.id },
-    data: { status: 'GRADED' }
+    data: { status: newStatus }
   })
 
   return {

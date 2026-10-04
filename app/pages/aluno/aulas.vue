@@ -97,6 +97,30 @@ function openLesson(lesson) {
 function closeLesson() {
   activeLesson.value = null
 }
+
+async function toggleProgress(lesson) {
+  try {
+    const isCompleted = lesson.progress?.length > 0 && lesson.progress[0].completed
+    
+    // Optimistic update
+    if (lesson.progress?.length > 0) {
+      lesson.progress[0].completed = !isCompleted
+    } else {
+      lesson.progress = [{ completed: true }]
+    }
+
+    await $fetch(`/api/student/lessons/${lesson.id}/progress`, {
+      method: 'POST'
+    })
+    
+    // Note: To be perfectly safe, we could refresh the report data later if needed,
+    // but the optimistic update handles the UI nicely.
+  } catch (err) {
+    console.error('Erro ao marcar aula:', err)
+    // Revert optimistic update on error
+    refresh()
+  }
+}
 </script>
 
 <template>
@@ -277,12 +301,15 @@ function closeLesson() {
                 v-if="expandedModules.has(mod.id)"
                 class="divide-y divide-[var(--student-border)] border-t border-[var(--student-border)]"
               >
-                <button
+                <div
                   v-for="lesson in mod.lessons"
                   :key="lesson.id"
-                  type="button"
-                  class="group flex w-full items-center gap-4 px-5 py-4 text-left transition hover:bg-[var(--student-primary-soft)]"
+                  role="button"
+                  tabindex="0"
+                  class="group flex w-full items-center gap-4 px-5 py-4 text-left transition hover:bg-[var(--student-primary-soft)] cursor-pointer"
                   @click="openLesson(lesson)"
+                  @keydown.enter="openLesson(lesson)"
+                  @keydown.space.prevent="openLesson(lesson)"
                 >
                   <!-- THUMBNAIL OU ÍCONE -->
                   <div class="relative shrink-0">
@@ -315,11 +342,24 @@ function closeLesson() {
                     </p>
                   </div>
 
+                  <!-- BOTÃO CONCLUÍDO -->
+                  <button
+                    type="button"
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition hover:scale-110"
+                    :class="lesson.progress?.length > 0 && lesson.progress[0].completed ? 'bg-green-500/10 text-green-500' : 'bg-[var(--student-surface-secondary)] text-[var(--student-text-muted)] hover:bg-[var(--student-primary-soft)] hover:text-[var(--student-primary-text)]'"
+                    title="Marcar como concluída"
+                    @click.stop="toggleProgress(lesson)"
+                  >
+                    <span class="material-symbols-rounded text-xl">
+                      {{ lesson.progress?.length > 0 && lesson.progress[0].completed ? 'check_circle' : 'radio_button_unchecked' }}
+                    </span>
+                  </button>
+
                   <!-- SETA -->
                   <span class="material-symbols-rounded shrink-0 text-xl text-[var(--student-text-muted)] transition group-hover:translate-x-1 group-hover:text-[var(--student-primary-text)]">
                     chevron_right
                   </span>
-                </button>
+                </div>
               </div>
             </Transition>
             </div>
@@ -329,31 +369,36 @@ function closeLesson() {
     </div>
   </div>
 
-  <!-- MODAL DE VÍDEO -->
+  <!-- MODAL DE VÍDEO (MODO CINEMA) -->
   <Teleport to="body">
     <Transition name="modal-fade">
       <div
         v-if="activeLesson"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        class="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 lg:p-6 landscape:max-h-screen landscape:p-0 sm:landscape:p-2"
         @click.self="closeLesson"
       >
-        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="closeLesson"></div>
+        <!-- Fundo ultra escuro (modo cinema) -->
+        <div class="absolute inset-0 bg-black/92 backdrop-blur-xl transition-opacity" @click="closeLesson"></div>
 
-        <div class="relative z-10 w-full max-w-3xl rounded-3xl bg-[var(--student-card)] shadow-2xl">
-          <!-- CABEÇALHO DO MODAL -->
-          <div class="flex items-start justify-between gap-4 border-b border-[var(--student-border)] p-5">
-            <div class="min-w-0">
-              <h3 class="text-base font-black text-[var(--student-text)]">
-                {{ activeLesson.title }}
-              </h3>
-              <p v-if="activeLesson.description" class="mt-1 text-xs text-[var(--student-text-secondary)] line-clamp-2">
+        <div class="relative z-10 flex h-full max-h-screen w-full max-w-5xl flex-col overflow-hidden bg-zinc-950 text-white shadow-2xl transition-all sm:h-auto sm:max-h-[92vh] sm:rounded-3xl lg:max-w-6xl landscape:h-full landscape:max-h-screen landscape:rounded-none sm:landscape:max-h-[96vh] sm:landscape:rounded-2xl">
+          <!-- CABEÇALHO DO MODAL (COMPACTO NO LANDSCAPE) -->
+          <div class="flex shrink-0 items-center justify-between gap-3 border-b border-zinc-800/80 bg-zinc-900/90 px-4 py-2.5 sm:px-6 sm:py-3.5 backdrop-blur-md">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2">
+                <span class="inline-flex h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
+                <h3 class="truncate text-sm sm:text-base font-bold text-white">
+                  {{ activeLesson.title }}
+                </h3>
+              </div>
+              <p v-if="activeLesson.description" class="mt-0.5 truncate text-xs text-zinc-400">
                 {{ activeLesson.description }}
               </p>
             </div>
 
             <button
               type="button"
-              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[var(--student-border)] text-[var(--student-text-secondary)] transition hover:bg-red-50 hover:text-red-500"
+              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-800/80 text-zinc-300 transition hover:bg-red-500 hover:text-white"
+              aria-label="Fechar vídeo"
               @click="closeLesson"
             >
               <span class="material-symbols-rounded text-xl">close</span>
@@ -361,10 +406,10 @@ function closeLesson() {
           </div>
 
           <!-- PLAYER DE VÍDEO -->
-          <div class="p-5">
+          <div class="flex flex-1 items-center justify-center overflow-y-auto bg-black p-0 sm:p-2 lg:p-4 landscape:p-0">
             <div
               v-if="getYoutubeId(activeLesson.videoUrl)"
-              class="aspect-video w-full overflow-hidden rounded-2xl bg-black"
+              class="relative aspect-video w-full max-h-full overflow-hidden bg-black shadow-2xl sm:rounded-2xl landscape:h-full landscape:w-full landscape:rounded-none sm:landscape:rounded-xl"
             >
               <iframe
                 :src="`https://www.youtube.com/embed/${getYoutubeId(activeLesson.videoUrl)}?autoplay=1&rel=0`"
@@ -378,15 +423,15 @@ function closeLesson() {
             <!-- Sem vídeo -->
             <div
               v-else-if="activeLesson.videoUrl"
-              class="flex aspect-video w-full flex-col items-center justify-center rounded-2xl border border-[var(--student-border)] bg-[var(--student-surface-secondary)] text-center p-6"
+              class="flex aspect-video w-full flex-col items-center justify-center rounded-2xl border border-zinc-800 bg-zinc-900 text-center p-6"
             >
-              <span class="material-symbols-rounded text-5xl text-[var(--student-text-muted)]">video_library</span>
-              <p class="mt-3 text-sm font-bold text-[var(--student-text)]">Aula disponível externamente</p>
+              <span class="material-symbols-rounded text-5xl text-zinc-500">video_library</span>
+              <p class="mt-3 text-sm font-bold text-white">Aula disponível externamente</p>
               <a
                 :href="activeLesson.videoUrl"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="mt-4 inline-flex items-center gap-2 rounded-xl bg-[var(--student-primary-solid)] px-5 py-2.5 text-sm font-bold text-white transition hover:opacity-90"
+                class="mt-4 inline-flex items-center gap-2 rounded-xl bg-purple-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-purple-500"
               >
                 <span class="material-symbols-rounded text-sm">open_in_new</span>
                 Abrir vídeo
@@ -395,10 +440,10 @@ function closeLesson() {
 
             <div
               v-else
-              class="flex aspect-video w-full flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--student-border)] text-center"
+              class="flex aspect-video w-full flex-col items-center justify-center rounded-2xl border border-dashed border-zinc-800 text-center p-6"
             >
-              <span class="material-symbols-rounded text-5xl text-[var(--student-text-muted)]">videocam_off</span>
-              <p class="mt-3 text-sm text-[var(--student-text-muted)]">Vídeo ainda não disponível para esta aula.</p>
+              <span class="material-symbols-rounded text-5xl text-zinc-600">videocam_off</span>
+              <p class="mt-3 text-sm text-zinc-400">Vídeo ainda não disponível para esta aula.</p>
             </div>
           </div>
         </div>

@@ -42,114 +42,60 @@ let timerInterval = null
 const fontSize = ref(15) // em px
 
 const loadingClassrooms = ref(true)
-const submitting = ref(false)
-const errorMessage = ref('')
-const successSubmitted = ref(false)
 const showMotivatorModal = ref(false)
+const showConnectorsDrawer = ref(false)
 
-// Banco de Temas com Textos Motivadores Reais no Padrão ENEM
-const suggestedThemes = [
+const strategicConnectors = [
   {
-    id: 1,
-    title: 'Desafios para a valorização da herança africana e dos povos originários no Brasil',
-    category: 'Sociedade & Cultura',
-    instructions: 'A partir da leitura dos textos motivadores seguintes e com base nos conhecimentos construídos ao longo de sua formação, redija um texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa sobre o tema.',
-    motivators: [
-      {
-        title: 'Texto I',
-        content: 'A história do Brasil foi moldada pela pluralidade de saberes, línguas e tradições trazidas pelos povos africanos escravizados e pelos povos originários que já habitavam este território. No entanto, o processo de apagamento histórico e o racismo estrutural resultaram na invisibilização dessas contribuições nos currículos escolares e nos espaços de decisão e representatividade.'
-      },
-      {
-        title: 'Texto II',
-        content: 'Segundo dados do Censo Escolar e do Ministério da Educação, embora as Leis nº 10.639/03 e 11.645/08 tornem obrigatório o ensino de História e Cultura Afro-Brasileira e Indígena, mais da metade dos municípios brasileiros ainda não contam com diretrizes consolidadas e formação continuada para os docentes.'
-      },
-      {
-        title: 'Texto III',
-        content: 'A valorização das matrizes africanas e indígenas não é apenas um resgate da memória coletiva, mas um compromisso ético e constitucional para a garantia da cidadania, soberania territorial e erradicação de preconceitos históricos.'
-      }
-    ]
+    category: 'Adição / Continuidade (D1 e D2)',
+    items: ['Ademais', 'Outrossim', 'Além disso', 'Somado a isso', 'Paralelamente a isso', 'Vale ressaltar também que']
   },
   {
-    id: 2,
-    title: 'Impactos e regulamentação da inteligência artificial na educação e no mercado de trabalho',
-    category: 'Tecnologia & Educação',
-    instructions: 'A partir da leitura dos textos motivadores e com base em seu repertório sociocultural, desenvolva uma proposta de intervenção social para o tema.',
-    motivators: [
-      {
-        title: 'Texto I',
-        content: 'A ascensão de sistemas baseados em inteligência artificial generativa transforma a produção do conhecimento. No âmbito educacional, surgem debates sobre a personalização da aprendizagem versus o risco de atrofia do pensamento crítico e plágio sistemático.'
-      },
-      {
-        title: 'Texto II',
-        content: 'Relatório do Fórum Econômico Mundial aponta que até 2030 milhões de postos de trabalho serão automatizados, ao mesmo tempo em que novas profissões voltadas à supervisão ética e gestão tecnológica emergirão. A disparidade de acesso a essas ferramentas aprofunda a desigualdade socioeconômica.'
-      },
-      {
-        title: 'Texto III',
-        content: 'O Marco Legal da Inteligência Artificial em debate no Congresso Nacional busca equilibrar inovação com proteção de dados, direitos autorais e mitigação de vieses algorítmicos discriminatórios.'
-      }
-    ]
+    category: 'Oposição / Contraponto (Antítese)',
+    items: ['No entanto', 'Entretanto', 'Contudo', 'Todavia', 'Por outro lado', 'Em contrapartida', 'Não obstante']
   },
   {
-    id: 3,
-    title: 'Caminhos para combater a crise climática e a insegurança alimentar no país',
-    category: 'Meio Ambiente & Cidadania',
-    instructions: 'Com base nos textos motivadores, elabore um texto dissertativo-argumentativo apresentando proposta de intervenção.',
-    motivators: [
-      {
-        title: 'Texto I',
-        content: 'Eventos climáticos extremos como secas prolongadas e inundações afetam diretamente a agricultura familiar, responsável pela maior parte dos alimentos que chegam à mesa da população brasileira.'
-      },
-      {
-        title: 'Texto II',
-        content: 'O Brasil voltou ao Mapa da Fome da ONU, evidenciando que a perda de colheitas, a inflação alimentar e a degradação dos solos impactam com maior severidade as populações em situação de vulnerabilidade periférica e rural.'
-      },
-      {
-        title: 'Texto III',
-        content: 'A agroecologia e a restauração de biomas surgem como alternativas viáveis para associar segurança alimentar à preservação do equilíbrio ambiental e diminuição da emissão de gases estufa.'
-      }
-    ]
+    category: 'Causa e Efeito (Argumentação)',
+    items: ['Haja vista que', 'Por conseguinte', 'Dessa forma', 'Em decorrência de', 'Visto que', 'Como consequência']
   },
   {
-    id: 4,
-    title: 'Invisibilidade e registro civil: garantia de acesso à cidadania no Brasil',
-    category: 'Direitos Humanos',
-    instructions: 'Redija uma dissertação-argumentativa formal com proposta de intervenção que respeite os direitos humanos.',
-    motivators: [
-      {
-        title: 'Texto I',
-        content: 'Toda pessoa tem direito ao reconhecimento como pessoa perante a lei. A certidão de nascimento é o primeiro documento que assegura o exercício da cidadania e a existência legal do indivíduo.'
-      },
-      {
-        title: 'Texto II',
-        content: 'Sem a certidão de nascimento, o cidadão não consegue emitir RG, CPF, matricular-se na rede pública de ensino ou acessar programas de transferência de renda e vacinação.'
-      },
-      {
-        title: 'Texto III',
-        content: 'Ações itinerantes da Justiça e gratuidade dos cartórios são vitais para erradicar o sub-registro civil que ainda atinge milhares de brasileiros em áreas isoladas.'
-      }
-    ]
+    category: 'Conclusão & Proposta C5',
+    items: ['Portanto', 'Infere-se, pois, que', 'Torna-se imperioso, portanto, que', 'Em suma', 'Desse modo, cabe ao']
   },
   {
-    id: 5,
-    title: 'A importância da saúde mental e os estigmas associados às doenças psíquicas na juventude',
-    category: 'Saúde Pública',
-    instructions: 'Analise o cenário com base nos textos motivadores e redija sua redação nos moldes do ENEM.',
-    motivators: [
-      {
-        title: 'Texto I',
-        content: 'A cobrança por desempenho acadêmico, a hiperconectividade nas redes sociais e a falta de espaços de acolhimento têm ampliado os índices de ansiedade e depressão entre adolescentes e jovens adultos.'
-      },
-      {
-        title: 'Texto II',
-        content: 'Ainda persiste na sociedade o tabu de que problemas de saúde mental representam fraqueza ou falta de esforço, postergando a busca por auxílio profissional e tratamento psicológico.'
-      },
-      {
-        title: 'Texto III',
-        content: 'A atuação integrada da atenção primária à saúde com o ambiente escolar (Programa Saúde na Escola) é indispensável para a identificação precoce e suporte emocional.'
-      }
-    ]
+    category: 'Conformidade / Repertório',
+    items: ['Consoante defende', 'Segundo o pensamento de', 'Sob a ótica de', 'Em consonância com a Constituição']
   }
 ]
+
+const { data: dbTopicsData } = await useFetch('/api/student/redacao/topics')
+
+const suggestedThemes = computed(() => {
+  const dbTopics = (dbTopicsData.value?.topics || []).map(t => {
+    let motivators = []
+    if (t.motivationText) {
+      try {
+        const parsed = JSON.parse(t.motivationText)
+        if (Array.isArray(parsed)) {
+          motivators = parsed
+        }
+      } catch (e) {
+        motivators = [{ title: 'Textos Motivadores Propostos', content: t.motivationText }]
+      }
+    }
+
+    return {
+      id: t.id,
+      title: t.title,
+      category: t.axis || 'Geral',
+      instructions: t.description || 'A partir da leitura dos textos motivadores e com base nos conhecimentos construídos ao longo de sua formação, redija um texto dissertativo-argumentativo.',
+      imageUrl: t.imageUrl || null,
+      motivators
+    }
+  })
+
+  return dbTopics
+})
 
 // Métricas
 const wordCount = computed(() => {
@@ -746,6 +692,19 @@ onUnmounted(() => {
           </p>
         </div>
 
+        <!-- Imagem / Gráfico de Apoio do Tema -->
+        <div v-if="selectedThemeObj?.imageUrl" class="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs overflow-hidden">
+          <div class="flex items-center gap-2 mb-3 text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <span class="material-symbols-rounded text-purple-600">image</span>
+            <span>Gráfico / Imagem de Apoio</span>
+          </div>
+          <img
+            :src="selectedThemeObj.imageUrl"
+            alt="Gráfico de Apoio"
+            class="max-h-96 w-full object-contain rounded-xl bg-slate-50 border border-slate-100"
+          />
+        </div>
+
         <!-- Textos Motivadores I, II, III -->
         <div class="space-y-4">
           <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
@@ -756,14 +715,21 @@ onUnmounted(() => {
           <div
             v-for="(mot, idx) in selectedThemeObj?.motivators"
             :key="idx"
-            class="rounded-2xl border border-slate-200 bg-white p-5 space-y-2 shadow-xs"
+            class="rounded-2xl border border-slate-200 bg-white p-5 space-y-3 shadow-xs"
           >
-            <span class="text-xs font-black text-purple-700 uppercase tracking-wide">
+            <span class="text-xs font-black text-purple-700 uppercase tracking-wide block">
               {{ mot.title }}
             </span>
-            <p class="text-xs sm:text-sm leading-relaxed text-slate-700 text-justify">
+            <p v-if="mot.content" class="text-xs sm:text-sm leading-relaxed text-slate-700 text-justify whitespace-pre-line">
               {{ mot.content }}
             </p>
+            <div v-if="mot.imageUrl" class="pt-2">
+              <img
+                :src="mot.imageUrl"
+                alt="Gráfico / Imagem do Motivador"
+                class="max-h-80 w-full object-contain rounded-xl bg-slate-50 border border-slate-100 p-1"
+              />
+            </div>
           </div>
         </div>
 
@@ -878,26 +844,26 @@ onUnmounted(() => {
             v-model="essayTitle"
             type="text"
             placeholder="Título (opcional)"
-            class="w-full text-center text-sm font-medium text-slate-600 placeholder-slate-400 border-b border-slate-300 pb-1 outline-none bg-transparent focus:border-purple-600 transition"
+            class="w-full text-center text-sm font-medium text-slate-600 dark:text-zinc-300 placeholder-slate-400 dark:placeholder-zinc-500 border-b border-slate-300 dark:border-zinc-700 pb-1 outline-none bg-transparent focus:border-purple-600 dark:focus:border-purple-400 transition"
           />
         </div>
 
         <!-- ÁREA DE DIGITAÇÃO AMPLA (FOLHA PAUTADA 30 LINHAS PADRÃO ENEM) -->
-        <div v-if="submissionMode === 'TEXT'" class="w-full rounded-2xl border border-slate-300 bg-white shadow-xs overflow-hidden">
+        <div v-if="submissionMode === 'TEXT'" class="w-full rounded-2xl border border-slate-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs overflow-hidden transition-colors duration-200">
           <textarea
             v-model="essayText"
             rows="30"
             placeholder="Escreva sua redação (Linha 1)..."
-            class="lined-editor-exact w-full p-0 font-sans text-slate-800 outline-none resize-y bg-transparent select-text"
+            class="lined-editor-exact w-full p-0 font-sans text-slate-800 dark:text-zinc-100 outline-none resize-y bg-transparent select-text"
             :style="{ fontSize: `${fontSize}px` }"
           ></textarea>
         </div>
 
         <!-- MODO FOTO -->
-        <div v-else class="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs space-y-3">
+        <div v-else class="rounded-2xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-xs space-y-3 transition-colors duration-200">
           <div
             v-if="!photoPreview"
-            class="border-2 border-dashed border-slate-300 rounded-2xl p-10 text-center hover:border-purple-500 transition cursor-pointer"
+            class="border-2 border-dashed border-slate-300 dark:border-zinc-700 rounded-2xl p-10 text-center hover:border-purple-500 transition cursor-pointer"
             @click="$refs.fileInput.click()"
           >
             <input
@@ -907,17 +873,17 @@ onUnmounted(() => {
               class="hidden"
               @change="handlePhotoUpload"
             />
-            <span class="material-symbols-rounded text-5xl text-purple-600 mb-2">add_photo_alternate</span>
-            <p class="text-sm font-bold text-slate-800">Clique para selecionar ou tirar foto da folha</p>
+            <span class="material-symbols-rounded text-5xl text-purple-600 dark:text-purple-400 mb-2">add_photo_alternate</span>
+            <p class="text-sm font-bold text-slate-800 dark:text-zinc-200">Clique para selecionar ou tirar foto da folha</p>
           </div>
 
           <div v-else class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-emerald-600 flex items-center gap-1">
+              <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                 <span class="material-symbols-rounded text-sm">check_circle</span>
                 Foto carregada com sucesso
               </span>
-              <button type="button" @click="removePhoto" class="text-xs text-red-500 font-bold hover:underline">
+              <button type="button" @click="removePhoto" class="text-xs text-red-500 font-bold hover:underline cursor-pointer">
                 Remover foto
               </button>
             </div>
@@ -927,15 +893,15 @@ onUnmounted(() => {
 
         <!-- SEÇÃO: FERRAMENTAS -->
         <div class="space-y-2">
-          <span class="text-xs font-bold text-slate-500">Ferramentas</span>
+          <span class="text-xs font-bold text-slate-500 dark:text-zinc-400">Ferramentas</span>
 
-          <!-- Botões Fonte & Timer -->
-          <div class="grid grid-cols-2 gap-2">
+          <!-- Botões Fonte, Timer & Guia de Conectivos -->
+          <div class="grid grid-cols-3 gap-2">
             <!-- Botão Fonte -->
             <button
               type="button"
               @click="toggleFontSize"
-              class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-100 text-xs font-bold text-slate-700 hover:bg-slate-200 transition cursor-pointer"
+              class="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800 text-xs font-bold text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-700 transition cursor-pointer border border-slate-200/60 dark:border-zinc-700/60"
             >
               <span class="material-symbols-rounded text-base">text_fields</span>
               <span>Fonte ({{ fontSize }}px)</span>
@@ -945,42 +911,52 @@ onUnmounted(() => {
             <button
               type="button"
               @click="toggleTimer"
-              class="flex items-center justify-center gap-2 py-2.5 rounded-xl transition text-xs font-bold cursor-pointer"
-              :class="timerRunning ? 'bg-purple-100 text-purple-700 border border-purple-200' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+              class="flex items-center justify-center gap-1.5 py-2.5 rounded-xl transition text-xs font-bold cursor-pointer border"
+              :class="timerRunning ? 'bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800' : 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border-slate-200/60 dark:border-zinc-700/60 hover:bg-slate-200 dark:hover:bg-zinc-700'"
             >
               <span class="material-symbols-rounded text-base">timer</span>
-              <span>{{ timerRunning ? `Pausar (${formattedTimer})` : `Iniciar (${formattedTimer})` }}</span>
+              <span>{{ timerRunning ? `Pausar (${formattedTimer})` : `Timer (${formattedTimer})` }}</span>
+            </button>
+
+            <!-- Botão Guia de Conectivos C4 -->
+            <button
+              type="button"
+              @click="showConnectorsDrawer = true"
+              class="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60 hover:bg-purple-100 dark:hover:bg-purple-900/40 transition text-xs font-black cursor-pointer"
+            >
+              <span class="material-symbols-rounded text-base">link</span>
+              <span>Conectivos C4</span>
             </button>
           </div>
         </div>
 
         <!-- SEÇÃO: VISÃO GERAL -->
         <div class="space-y-2">
-          <span class="text-xs font-bold text-slate-500">Visão Geral</span>
+          <span class="text-xs font-bold text-slate-500 dark:text-zinc-400">Visão Geral</span>
 
           <div class="grid grid-cols-3 gap-2">
-            <div class="rounded-xl bg-slate-100 p-3">
-              <span class="text-[11px] text-slate-500 block">Palavras:</span>
-              <p class="text-sm font-bold text-red-600 mt-0.5">{{ wordCount }}</p>
+            <div class="rounded-xl bg-slate-100 dark:bg-zinc-800 p-3 border border-slate-200/60 dark:border-zinc-700/60">
+              <span class="text-[11px] text-slate-500 dark:text-zinc-400 block">Palavras:</span>
+              <p class="text-sm font-bold text-red-600 dark:text-red-400 mt-0.5">{{ wordCount }}</p>
             </div>
 
-            <div class="rounded-xl bg-slate-100 p-3">
-              <span class="text-[11px] text-slate-500 block">Frases:</span>
-              <p class="text-sm font-bold text-red-600 mt-0.5">{{ phraseCount }}</p>
+            <div class="rounded-xl bg-slate-100 dark:bg-zinc-800 p-3 border border-slate-200/60 dark:border-zinc-700/60">
+              <span class="text-[11px] text-slate-500 dark:text-zinc-400 block">Frases:</span>
+              <p class="text-sm font-bold text-red-600 dark:text-red-400 mt-0.5">{{ phraseCount }}</p>
             </div>
 
-            <div class="rounded-xl bg-slate-100 p-3">
-              <span class="text-[11px] text-slate-500 block">Parágrafos:</span>
-              <p class="text-sm font-bold text-red-600 mt-0.5">{{ paragraphCount }}</p>
+            <div class="rounded-xl bg-slate-100 dark:bg-zinc-800 p-3 border border-slate-200/60 dark:border-zinc-700/60">
+              <span class="text-[11px] text-slate-500 dark:text-zinc-400 block">Parágrafos:</span>
+              <p class="text-sm font-bold text-red-600 dark:text-red-400 mt-0.5">{{ paragraphCount }}</p>
             </div>
           </div>
         </div>
 
         <!-- SEÇÃO: TEMA E TEXTOS MOTIVADORES -->
         <div class="space-y-1.5">
-          <span class="text-xs font-bold text-slate-500">Tema</span>
+          <span class="text-xs font-bold text-slate-500 dark:text-zinc-400">Tema</span>
 
-          <div class="flex items-center justify-between rounded-xl bg-slate-100 p-3 text-xs text-slate-700">
+          <div class="flex items-center justify-between rounded-xl bg-slate-100 dark:bg-zinc-800 p-3 text-xs text-slate-700 dark:text-zinc-200 border border-slate-200/60 dark:border-zinc-700/60">
             <span class="font-medium truncate pr-2" :title="chosenTheme">
               {{ chosenTheme }}
             </span>
@@ -1031,6 +1007,54 @@ onUnmounted(() => {
         </div>
       </section>
     </template>
+
+    <!-- Drawer Lateral: Banco de Conectivos e Operadores Argumentativos C4 -->
+    <Teleport to="body">
+      <Transition name="slide">
+        <div v-if="showConnectorsDrawer" class="fixed inset-0 z-50 flex justify-end">
+          <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-2xs" @click="showConnectorsDrawer = false"></div>
+          <div class="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col z-10 font-sans">
+            <div class="flex items-center justify-between p-4 border-b border-slate-100 bg-purple-50/50">
+              <div class="flex items-center gap-2 text-purple-800">
+                <span class="material-symbols-rounded text-xl">link</span>
+                <div>
+                  <h3 class="text-sm font-black text-slate-900">Banco de Conectivos ENEM</h3>
+                  <p class="text-[11px] text-purple-700">Operadores Argumentativos para a Competência 4</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                @click="showConnectorsDrawer = false"
+                class="h-8 w-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-white transition"
+              >
+                <span class="material-symbols-rounded text-xl">close</span>
+              </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 space-y-4">
+              <div
+                v-for="(cat, idx) in strategicConnectors"
+                :key="idx"
+                class="rounded-2xl border border-slate-200 bg-slate-50/50 p-3.5 space-y-2"
+              >
+                <span class="text-xs font-black text-purple-900 block">
+                  {{ cat.category }}
+                </span>
+                <div class="flex flex-wrap gap-1.5">
+                  <span
+                    v-for="item in cat.items"
+                    :key="item"
+                    class="px-2.5 py-1 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-2xs select-all hover:border-purple-300 transition"
+                  >
+                    {{ item }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -1059,8 +1083,25 @@ onUnmounted(() => {
   box-sizing: border-box;
 }
 
+:global(html.dark) .lined-editor-exact,
+:global([data-theme="dark"]) .lined-editor-exact {
+  color: #fafafa !important;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 31px,
+    #27272a 31px,
+    #27272a 32px
+  );
+}
+
 .lined-editor-exact::placeholder {
   color: #94a3b8;
   line-height: 32px !important;
+}
+
+:global(html.dark) .lined-editor-exact::placeholder,
+:global([data-theme="dark"]) .lined-editor-exact::placeholder {
+  color: #71717a;
 }
 </style>

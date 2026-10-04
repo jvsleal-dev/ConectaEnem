@@ -32,7 +32,15 @@ const components = {
   ),
 
   students: defineAsyncComponent(() =>
-    import('~/components/admin/students/StudentList.vue')
+    import('~/components/admin/users/UserManager.vue')
+  ),
+
+  users: defineAsyncComponent(() =>
+    import('~/components/admin/users/UserManager.vue')
+  ),
+
+  redacao: defineAsyncComponent(() =>
+    import('~/components/admin/redacao/RedacaoManager.vue')
   )
 }
 

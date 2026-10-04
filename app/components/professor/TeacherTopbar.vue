@@ -14,6 +14,7 @@ const emit = defineEmits([
 ])
 
 const authStore = useAuthStore()
+const { isDark, toggleTheme } = useTheme()
 const teacherName = computed(() => authStore.user?.name || 'Professor')
 
 const initials = computed(() => {
@@ -24,12 +25,12 @@ const initials = computed(() => {
 </script>
 
 <template>
-  <header class="teacher-topbar">
-    <div class="teacher-topbar__left">
+  <header class="teacher-topbar sticky top-0 z-30 h-[72px] px-4 sm:px-7 flex items-center justify-between bg-white dark:bg-[#0f1015] border-b border-slate-200 dark:border-zinc-800 transition-colors duration-200">
+    <div class="flex items-center gap-3">
       <!-- Mobile menu trigger -->
       <button
         type="button"
-        class="teacher-topbar__icon-btn teacher-topbar__icon-btn--mobile"
+        class="w-[38px] h-[38px] flex lg:hidden items-center justify-center rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800 transition cursor-pointer"
         aria-label="Abrir menu"
         @click="emit('open-mobile-sidebar')"
       >
@@ -39,7 +40,7 @@ const initials = computed(() => {
       <!-- Desktop collapse trigger -->
       <button
         type="button"
-        class="teacher-topbar__icon-btn teacher-topbar__icon-btn--desktop"
+        class="w-[38px] h-[38px] hidden lg:flex items-center justify-center rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800 transition cursor-pointer"
         :aria-label="sidebarCollapsed ? 'Expandir menu lateral' : 'Recolher menu lateral'"
         @click="emit('toggle-sidebar')"
       >
@@ -49,14 +50,26 @@ const initials = computed(() => {
       </button>
     </div>
 
-    <div class="teacher-topbar__right">
-      <div class="teacher-topbar__user">
-        <div class="teacher-topbar__avatar">
+    <div class="flex items-center gap-3">
+      <!-- Dark Mode Switcher -->
+      <button
+        type="button"
+        :title="isDark ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'"
+        class="w-[38px] h-[38px] flex items-center justify-center rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 hover:bg-slate-50 dark:hover:bg-zinc-800 transition cursor-pointer"
+        @click="toggleTheme"
+      >
+        <span class="material-symbols-rounded text-lg">
+          {{ isDark ? 'dark_mode' : 'light_mode' }}
+        </span>
+      </button>
+
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 flex items-center justify-center rounded-xl bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-black text-xs border border-purple-200/60 dark:border-purple-800/40">
           {{ initials }}
         </div>
         <div class="hidden sm:block text-left">
-          <p class="text-xs font-bold text-slate-800 leading-none">{{ teacherName }}</p>
-          <span class="text-[10px] font-semibold text-slate-400">Professor</span>
+          <p class="text-xs font-bold text-slate-800 dark:text-zinc-100 leading-none">{{ teacherName }}</p>
+          <span class="text-[10px] font-semibold text-slate-400 dark:text-zinc-500">Professor</span>
         </div>
       </div>
     </div>
@@ -65,84 +78,6 @@ const initials = computed(() => {
 
 <style scoped>
 .teacher-topbar {
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 28px;
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
   position: sticky;
-  top: 0;
-  z-index: 30;
-}
-
-.teacher-topbar__left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.teacher-topbar__icon-btn {
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  background: #ffffff;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.teacher-topbar__icon-btn:hover {
-  background: #f8fafc;
-  color: #0f172a;
-}
-
-.teacher-topbar__icon-btn--mobile {
-  display: none;
-}
-
-.teacher-topbar__right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.teacher-topbar__user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.teacher-topbar__avatar {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  background: #f3e8ff;
-  color: #7e22ce;
-  font-size: 12px;
-  font-weight: 800;
-  border: 1px solid #e9d5ff;
-}
-
-@media(max-width: 1023px) {
-  .teacher-topbar {
-    padding: 0 16px;
-  }
-
-  .teacher-topbar__icon-btn--desktop {
-    display: none;
-  }
-
-  .teacher-topbar__icon-btn--mobile {
-    display: flex;
-  }
 }
 </style>

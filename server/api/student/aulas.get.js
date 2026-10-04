@@ -3,7 +3,7 @@ import { getAuthenticatedUser } from '#server/services/auth.service.js'
 import prisma from '#server/utils/prisma'
 
 export default defineEventHandler(async (event) => {
-  await getAuthenticatedUser(event)
+  const user = await getAuthenticatedUser(event)
 
   const query = getQuery(event)
   const subjectId = typeof query.subjectId === 'string' ? query.subjectId : undefined
@@ -45,7 +45,11 @@ export default defineEventHandler(async (event) => {
               title: true,
               description: true,
               videoUrl: true,
-              order: true
+              order: true,
+              progress: {
+                where: { userId: user.id },
+                select: { completed: true }
+              }
             }
           }
         }

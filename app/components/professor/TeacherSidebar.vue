@@ -71,20 +71,22 @@ async function handleLogout() {
 
 <template>
   <aside
-    class="teacher-sidebar"
+    class="teacher-sidebar fixed inset-y-0 left-0 z-50 flex flex-col bg-white dark:bg-[#0f1015] border-r border-slate-200 dark:border-zinc-800 transition-all duration-200"
     :class="{
-      'teacher-sidebar--collapsed': collapsed,
-      'teacher-sidebar--mobile-open': mobileOpen
+      'w-[82px]': collapsed,
+      'w-[260px]': !collapsed,
+      '-translate-x-full lg:translate-x-0': !mobileOpen,
+      'translate-x-0': mobileOpen
     }"
   >
     <!-- HEADER / BRAND -->
-    <div class="teacher-sidebar__header">
+    <div class="h-[72px] px-4 flex items-center justify-between border-b border-slate-100 dark:border-zinc-800/80 shrink-0">
       <NuxtLink
         to="/professor"
-        class="teacher-brand"
+        class="flex items-center gap-3 no-underline text-inherit"
         @click="handleItemClick"
       >
-        <span class="teacher-brand__icon">
+        <span class="w-11 h-11 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-zinc-800/80 border border-slate-200/60 dark:border-zinc-700/50 shrink-0 overflow-hidden p-0.5">
           <img
             src="/images/logo conta.png"
             alt="Logo Conectar ENEM"
@@ -94,31 +96,31 @@ async function handleLogout() {
 
         <span
           v-if="!collapsed"
-          class="teacher-brand__text"
+          class="flex flex-col text-left"
         >
-          <strong>Conectar ENEM</strong>
-          <small>Painel do Professor</small>
+          <strong class="text-xs font-black text-slate-900 dark:text-zinc-100 leading-tight">Conectar ENEM</strong>
+          <small class="text-[11px] font-bold text-purple-600 dark:text-purple-400">Painel do Professor</small>
         </span>
       </NuxtLink>
 
       <button
         type="button"
-        class="teacher-sidebar__collapse"
+        class="w-8 h-8 flex items-center justify-center rounded-lg border-0 bg-transparent text-slate-500 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800/80 dark:hover:text-zinc-100 transition cursor-pointer"
         :aria-label="collapsed ? 'Expandir menu' : 'Recolher menu'"
         @click="emit('toggle')"
       >
-        <span class="material-symbols-rounded">
+        <span class="material-symbols-rounded text-xl">
           {{ collapsed ? 'chevron_right' : 'chevron_left' }}
         </span>
       </button>
     </div>
 
     <!-- NAVIGATION LINKS -->
-    <nav class="teacher-navigation">
-      <div class="teacher-navigation__group">
+    <nav class="flex-1 overflow-y-auto px-3 py-5 space-y-6">
+      <div>
         <span
           v-if="!collapsed"
-          class="teacher-navigation__title"
+          class="block px-3 pb-2.5 text-[10px] font-extrabold tracking-wider text-slate-400 dark:text-zinc-500 uppercase"
         >
           MENU PRINCIPAL
         </span>
@@ -127,21 +129,24 @@ async function handleLogout() {
           v-for="item in navigation"
           :key="item.label"
           :to="item.to"
-          class="teacher-nav-item"
-          :class="{
-            'teacher-nav-item--active': isActive(item.to)
-          }"
+          class="flex items-center gap-3 px-3 h-11 mb-1 rounded-xl font-semibold text-xs transition duration-150 no-underline cursor-pointer"
+          :class="[
+            collapsed ? 'justify-center px-0' : '',
+            isActive(item.to)
+              ? 'bg-purple-100/80 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 font-bold'
+              : 'text-slate-600 dark:text-zinc-400 hover:bg-purple-50 dark:hover:bg-purple-950/30 hover:text-purple-700 dark:hover:text-purple-300'
+          ]"
           :title="collapsed ? item.label : undefined"
           @click="handleItemClick"
         >
-          <span class="material-symbols-rounded teacher-nav-item__icon">
+          <span
+            class="material-symbols-rounded text-xl shrink-0"
+            :class="isActive(item.to) ? 'text-purple-600 dark:text-purple-400' : 'text-slate-500 dark:text-zinc-500'"
+          >
             {{ item.icon }}
           </span>
 
-          <span
-            v-if="!collapsed"
-            class="teacher-nav-item__label"
-          >
+          <span v-if="!collapsed">
             {{ item.label }}
           </span>
         </NuxtLink>
@@ -149,34 +154,32 @@ async function handleLogout() {
     </nav>
 
     <!-- FOOTER / USER & LOGOUT -->
-    <div class="teacher-sidebar__footer">
+    <div class="p-3 border-t border-slate-100 dark:border-zinc-800/80 flex flex-col gap-2 shrink-0">
       <div
         v-if="!collapsed"
-        class="teacher-user-profile"
+        class="flex items-center gap-2.5 p-2 bg-slate-50 dark:bg-zinc-900 border border-slate-200/60 dark:border-zinc-800 rounded-xl"
       >
-        <div class="teacher-user-avatar">
+        <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 font-black text-xs shrink-0">
           {{ initials }}
         </div>
-        <div class="teacher-user-info">
-          <p class="teacher-user-name" :title="teacherName">{{ teacherName }}</p>
-          <span class="teacher-user-role">Docente de Redação</span>
+        <div class="min-w-0 flex-1">
+          <p class="text-xs font-bold text-slate-900 dark:text-zinc-100 truncate" :title="teacherName">{{ teacherName }}</p>
+          <span class="block text-[10px] text-slate-500 dark:text-zinc-400 leading-none">Docente de Redação</span>
         </div>
       </div>
 
       <button
         type="button"
-        class="teacher-nav-item teacher-nav-item--logout"
+        class="w-full h-11 flex items-center gap-3 px-3 rounded-xl font-semibold text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition cursor-pointer border-0 bg-transparent"
+        :class="collapsed ? 'justify-center px-0' : ''"
         :title="collapsed ? 'Sair' : undefined"
         @click="handleLogout"
       >
-        <span class="material-symbols-rounded teacher-nav-item__icon">
+        <span class="material-symbols-rounded text-xl shrink-0 text-red-500 dark:text-red-400">
           logout
         </span>
 
-        <span
-          v-if="!collapsed"
-          class="teacher-nav-item__label"
-        >
+        <span v-if="!collapsed">
           Sair
         </span>
       </button>
@@ -188,7 +191,7 @@ async function handleLogout() {
     <button
       v-if="mobileOpen"
       type="button"
-      class="teacher-mobile-overlay"
+      class="fixed inset-0 z-40 bg-slate-900/40 dark:bg-black/60 backdrop-blur-xs lg:hidden border-0"
       aria-label="Fechar menu"
       @click="emit('close-mobile')"
     ></button>
@@ -198,245 +201,5 @@ async function handleLogout() {
 <style scoped>
 .teacher-sidebar {
   position: fixed;
-  z-index: 50;
-  inset: 0 auto 0 0;
-  width: 260px;
-  display: flex;
-  flex-direction: column;
-  background: #ffffff;
-  border-right: 1px solid #e2e8f0;
-  transition: width 0.22s ease, transform 0.22s ease;
-}
-
-.teacher-sidebar--collapsed {
-  width: 82px;
-}
-
-.teacher-sidebar__header {
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-  border-bottom: 1px solid #f1f5f9;
-}
-
-.teacher-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
-}
-
-.teacher-brand__icon {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  flex-shrink: 0;
-  overflow: hidden;
-  padding: 2px;
-}
-
-.teacher-brand__text {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-}
-
-.teacher-brand__text strong {
-  font-size: 13px;
-  font-weight: 800;
-  color: #0f172a;
-}
-
-.teacher-brand__text small {
-  font-size: 11px;
-  font-weight: 600;
-  color: #9333ea;
-}
-
-.teacher-sidebar__collapse {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  cursor: pointer;
-  color: #64748b;
-  transition: all 0.15s ease;
-}
-
-.teacher-sidebar__collapse:hover {
-  background: #f1f5f9;
-  color: #0f172a;
-}
-
-.teacher-navigation {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px 12px;
-}
-
-.teacher-navigation__group + .teacher-navigation__group {
-  margin-top: 24px;
-}
-
-.teacher-navigation__title {
-  display: block;
-  padding: 0 12px 10px;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  color: #94a3b8;
-}
-
-.teacher-nav-item {
-  width: 100%;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 12px;
-  margin-bottom: 4px;
-  border: 0;
-  border-radius: 12px;
-  background: transparent;
-  color: #475569;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.15s ease;
-}
-
-.teacher-sidebar--collapsed .teacher-nav-item {
-  justify-content: center;
-  padding: 0;
-}
-
-.teacher-nav-item__icon {
-  font-size: 20px;
-  color: #64748b;
-  flex-shrink: 0;
-}
-
-.teacher-nav-item:hover {
-  background: #faf5ff;
-  color: #9333ea;
-}
-
-.teacher-nav-item:hover .teacher-nav-item__icon {
-  color: #9333ea;
-}
-
-.teacher-nav-item--active {
-  background: #f3e8ff;
-  color: #7e22ce;
-  font-weight: 800;
-}
-
-.teacher-nav-item--active .teacher-nav-item__icon {
-  color: #9333ea;
-}
-
-.teacher-nav-item--logout {
-  color: #ef4444;
-}
-
-.teacher-nav-item--logout:hover {
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-.teacher-nav-item--logout:hover .teacher-nav-item__icon {
-  color: #dc2626;
-}
-
-.teacher-sidebar__footer {
-  padding: 12px;
-  border-top: 1px solid #f1f5f9;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.teacher-user-profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px;
-  background: #f8fafc;
-  border-radius: 12px;
-}
-
-.teacher-user-avatar {
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  background: #f3e8ff;
-  color: #7e22ce;
-  font-size: 12px;
-  font-weight: 800;
-  flex-shrink: 0;
-}
-
-.teacher-user-info {
-  min-width: 0;
-  flex: 1;
-}
-
-.teacher-user-name {
-  font-size: 12px;
-  font-weight: 700;
-  color: #0f172a;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.teacher-user-role {
-  font-size: 10px;
-  color: #64748b;
-  display: block;
-}
-
-.teacher-mobile-overlay {
-  display: none;
-}
-
-@media(max-width: 1023px) {
-  .teacher-sidebar {
-    transform: translateX(-100%);
-    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.12);
-  }
-
-  .teacher-sidebar--mobile-open {
-    transform: translateX(0);
-  }
-
-  .teacher-mobile-overlay {
-    display: block;
-    position: fixed;
-    inset: 0;
-    z-index: 40;
-    border: 0;
-    background: rgba(15, 23, 42, 0.45);
-    backdrop-filter: blur(2px);
-  }
 }
 </style>

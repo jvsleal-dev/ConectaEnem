@@ -21,11 +21,6 @@ const items = [
     name: 'Estude',
     icon: 'menu_book',
     path: '/aluno/aulas'
-  },
-  {
-    name: 'Relatórios',
-    icon: 'monitoring',
-    path: '/aluno/perfil'
   }
 ]
 

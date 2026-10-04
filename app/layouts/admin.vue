@@ -1,7 +1,9 @@
 <script setup>
 import AdminSidebar from '~/components/admin/AdminSidebar.vue'
 import AdminTopbar from '~/components/admin/AdminTopbar.vue'
+import { useAdminTheme } from '~/composables/useAdminTheme'
 
+const { theme, isDark } = useAdminTheme()
 const sidebarCollapsed = ref(false)
 const mobileSidebarOpen = ref(false)
 
@@ -19,7 +21,11 @@ function closeMobileSidebar() {
 </script>
 
 <template>
-  <div class="admin-shell">
+  <div
+    class="admin-shell"
+    :data-theme="theme"
+    :class="{ dark: isDark }"
+  >
     <AdminSidebar
       :collapsed="sidebarCollapsed"
       :mobile-open="mobileSidebarOpen"

@@ -65,8 +65,7 @@ async function loadEssays() {
 }
 
 function openCorrection(essay) {
-  selectedEssay.value = essay
-  showGradeModal.value = true
+  navigateTo(`/professor/redacoes/${essay.id}`)
 }
 
 async function handleSaveGrade(data) {
@@ -104,13 +103,13 @@ function formatDate(d) {
 function getStatusBadge(status) {
   switch (status) {
     case 'PENDING':
-      return { label: 'Pendente', bg: 'bg-amber-50 text-amber-700 border-amber-200' }
+      return { label: 'Pendente', bg: 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800/60' }
     case 'CORRECTING':
-      return { label: 'Em Análise', bg: 'bg-blue-50 text-blue-700 border-blue-200' }
+      return { label: 'Em Análise', bg: 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800/60' }
     case 'GRADED':
-      return { label: 'Corrigida', bg: 'bg-emerald-50 text-emerald-700 border-emerald-200' }
+      return { label: 'Corrigida', bg: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/60' }
     default:
-      return { label: status, bg: 'bg-slate-50 text-slate-700 border-slate-200' }
+      return { label: status, bg: 'bg-slate-50 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border-slate-200 dark:border-zinc-700' }
   }
 }
 
@@ -151,10 +150,10 @@ onMounted(() => {
     <!-- Header Principal -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight dark:text-zinc-100">
           Redações dos Alunos
         </h1>
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-sm text-slate-500 dark:text-zinc-400">
           Todas as redações enviadas pelas suas turmas, organizadas por status e competências ENEM.
         </p>
       </div>
@@ -163,7 +162,7 @@ onMounted(() => {
         <button
           type="button"
           @click="loadEssays"
-          class="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition"
+          class="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 transition"
           title="Atualizar lista"
         >
           <span class="material-symbols-rounded text-lg">refresh</span>
@@ -177,47 +176,47 @@ onMounted(() => {
         type="button"
         @click="selectedStatus = ''"
         class="rounded-3xl border p-5 text-left transition"
-        :class="selectedStatus === '' ? 'border-purple-600 bg-purple-50/50 shadow-xs' : 'border-slate-200 bg-white hover:border-slate-300'"
+        :class="selectedStatus === '' ? 'border-purple-600 bg-purple-50/50 shadow-xs dark:bg-purple-950/40 dark:border-purple-500' : 'border-slate-200 bg-white hover:border-slate-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700'"
       >
         <div class="flex items-center justify-between">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Todas</span>
-          <span class="material-symbols-rounded text-lg text-purple-600">article</span>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">Todas</span>
+          <span class="material-symbols-rounded text-lg text-purple-600 dark:text-purple-400">article</span>
         </div>
-        <p class="mt-2 text-2xl font-black text-slate-900">{{ stats.total }}</p>
+        <p class="mt-2 text-2xl font-black text-slate-900 dark:text-zinc-100">{{ stats.total }}</p>
       </button>
 
       <button
         type="button"
         @click="selectedStatus = 'PENDING'"
         class="rounded-3xl border p-5 text-left transition"
-        :class="selectedStatus === 'PENDING' ? 'border-amber-500 bg-amber-50/50 shadow-xs' : 'border-slate-200 bg-white hover:border-slate-300'"
+        :class="selectedStatus === 'PENDING' ? 'border-amber-500 bg-amber-50/50 shadow-xs dark:bg-amber-950/40 dark:border-amber-500' : 'border-slate-200 bg-white hover:border-slate-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700'"
       >
         <div class="flex items-center justify-between">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-amber-600">Pendentes</span>
-          <span class="material-symbols-rounded text-lg text-amber-600">hourglass_top</span>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">Pendentes</span>
+          <span class="material-symbols-rounded text-lg text-amber-600 dark:text-amber-400">hourglass_top</span>
         </div>
-        <p class="mt-2 text-2xl font-black text-slate-900">{{ stats.pending }}</p>
+        <p class="mt-2 text-2xl font-black text-slate-900 dark:text-zinc-100">{{ stats.pending }}</p>
       </button>
 
       <button
         type="button"
         @click="selectedStatus = 'GRADED'"
         class="rounded-3xl border p-5 text-left transition"
-        :class="selectedStatus === 'GRADED' ? 'border-emerald-500 bg-emerald-50/50 shadow-xs' : 'border-slate-200 bg-white hover:border-slate-300'"
+        :class="selectedStatus === 'GRADED' ? 'border-emerald-500 bg-emerald-50/50 shadow-xs dark:bg-emerald-950/40 dark:border-emerald-500' : 'border-slate-200 bg-white hover:border-slate-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700'"
       >
         <div class="flex items-center justify-between">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Corrigidas</span>
-          <span class="material-symbols-rounded text-lg text-emerald-600">check_circle</span>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Corrigidas</span>
+          <span class="material-symbols-rounded text-lg text-emerald-600 dark:text-emerald-400">check_circle</span>
         </div>
-        <p class="mt-2 text-2xl font-black text-slate-900">{{ stats.graded }}</p>
+        <p class="mt-2 text-2xl font-black text-slate-900 dark:text-zinc-100">{{ stats.graded }}</p>
       </button>
 
-      <div class="rounded-3xl border border-slate-200 bg-white p-5">
+      <div class="rounded-3xl border border-slate-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
         <div class="flex items-center justify-between">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Turmas</span>
-          <span class="material-symbols-rounded text-lg text-blue-600">groups</span>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">Turmas</span>
+          <span class="material-symbols-rounded text-lg text-blue-600 dark:text-blue-400">groups</span>
         </div>
-        <p class="mt-2 text-2xl font-black text-slate-900">{{ classrooms.length }}</p>
+        <p class="mt-2 text-2xl font-black text-slate-900 dark:text-zinc-100">{{ classrooms.length }}</p>
       </div>
     </div>
 
@@ -225,20 +224,20 @@ onMounted(() => {
     <div class="flex flex-col sm:flex-row gap-3">
       <!-- Busca por texto ou nome do aluno -->
       <div class="relative flex-1">
-        <span class="material-symbols-rounded absolute left-3.5 top-3 text-slate-400 text-lg">search</span>
+        <span class="material-symbols-rounded absolute left-3.5 top-3 text-slate-400 dark:text-zinc-500 text-lg">search</span>
         <input
           v-model="searchQuery"
           @input="onSearchInput"
           type="text"
           placeholder="Buscar por tema, título ou nome do aluno..."
-          class="h-11 w-full rounded-2xl border border-slate-200 bg-white pl-10 pr-4 text-xs text-slate-800 outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 transition"
+          class="h-11 w-full rounded-2xl border border-slate-200 bg-white pl-10 pr-4 text-xs text-slate-800 outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 transition dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder-zinc-500"
         />
       </div>
 
       <!-- Filtro por Turma -->
       <select
         v-model="selectedClassroom"
-        class="h-11 rounded-2xl border border-slate-200 bg-white px-3.5 text-xs text-slate-700 outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 transition font-medium"
+        class="h-11 rounded-2xl border border-slate-200 bg-white px-3.5 text-xs text-slate-700 outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 transition font-medium dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
       >
         <option value="">Todas as turmas</option>
         <option v-for="c in classrooms" :key="c.id" :value="c.id">
@@ -248,19 +247,19 @@ onMounted(() => {
     </div>
 
     <!-- Listagem Principal de Redações -->
-    <div class="rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-xs">
+    <div class="rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
       <!-- Skeleton Loading -->
       <div v-if="loading" class="p-6 space-y-4 animate-pulse">
-        <div v-for="n in 4" :key="n" class="h-16 rounded-2xl bg-slate-100"></div>
+        <div v-for="n in 4" :key="n" class="h-16 rounded-2xl bg-slate-100 dark:bg-zinc-800"></div>
       </div>
 
       <!-- Estado Vazio -->
       <div v-else-if="essays.length === 0" class="p-12 text-center">
-        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-purple-50 text-purple-600 mb-3">
+        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-3xl bg-purple-50 text-purple-600 mb-3 dark:bg-purple-950/50 dark:text-purple-400">
           <span class="material-symbols-rounded text-3xl">inbox</span>
         </div>
-        <h3 class="text-base font-black text-slate-900">Nenhuma redação encontrada</h3>
-        <p class="mt-1 text-xs text-slate-500 max-w-sm mx-auto">
+        <h3 class="text-base font-black text-slate-900 dark:text-zinc-100">Nenhuma redação encontrada</h3>
+        <p class="mt-1 text-xs text-slate-500 max-w-sm mx-auto dark:text-zinc-400">
           Assim que seus alunos submeterem redações através das turmas, elas aparecerão listadas aqui para você corrigir.
         </p>
       </div>
@@ -268,7 +267,7 @@ onMounted(() => {
       <!-- Tabela / Lista de Redações -->
       <div v-else class="overflow-x-auto">
         <table class="w-full text-left text-xs">
-          <thead class="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-100">
+          <thead class="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-100 dark:bg-zinc-800/60 dark:text-zinc-400 dark:border-zinc-800">
             <tr>
               <th class="py-4 px-6">Aluno</th>
               <th class="py-4 px-6">Tema da Redação</th>
@@ -278,51 +277,51 @@ onMounted(() => {
               <th class="py-4 px-6 text-right">Ações</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-100">
+          <tbody class="divide-y divide-slate-100 dark:divide-zinc-800">
             <tr
               v-for="essay in essays"
               :key="essay.id"
-              class="hover:bg-slate-50/75 transition"
+              class="hover:bg-slate-50/75 dark:hover:bg-zinc-800/40 transition"
             >
               <!-- Aluno -->
               <td class="py-4 px-6">
                 <div class="flex items-center gap-3">
-                  <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-100 font-black text-purple-700 text-xs shrink-0">
+                  <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-100 font-black text-purple-700 text-xs shrink-0 dark:bg-purple-950/70 dark:text-purple-300">
                     {{ (essay.student?.name || 'A').slice(0, 2).toUpperCase() }}
                   </div>
                   <div>
-                    <p class="font-bold text-slate-900 text-sm">{{ essay.student?.name }}</p>
-                    <p class="text-[11px] text-slate-400">{{ essay.student?.email }}</p>
+                    <p class="font-bold text-slate-900 text-sm dark:text-zinc-100">{{ essay.student?.name }}</p>
+                    <p class="text-[11px] text-slate-400 dark:text-zinc-500">{{ essay.student?.email }}</p>
                   </div>
                 </div>
               </td>
 
               <!-- Tema -->
               <td class="py-4 px-6 max-w-xs">
-                <p class="font-bold text-slate-800 line-clamp-1 text-xs" :title="essay.theme">
+                <p class="font-bold text-slate-800 line-clamp-1 text-xs dark:text-zinc-200" :title="essay.theme">
                   {{ essay.theme }}
                 </p>
-                <p v-if="essay.title" class="text-[11px] text-slate-400 italic line-clamp-1">
+                <p v-if="essay.title" class="text-[11px] text-slate-400 italic line-clamp-1 dark:text-zinc-500">
                   "{{ essay.title }}"
                 </p>
               </td>
 
               <!-- Turma -->
               <td class="py-4 px-6">
-                <span class="inline-flex items-center gap-1 font-bold text-purple-700 bg-purple-50 px-2 py-1 rounded-lg text-[11px]">
+                <span class="inline-flex items-center gap-1 font-bold text-purple-700 bg-purple-50 px-2 py-1 rounded-lg text-[11px] dark:bg-purple-950/50 dark:text-purple-300">
                   {{ essay.classroom?.name || 'Sem turma' }}
                 </span>
               </td>
 
               <!-- Data -->
-              <td class="py-4 px-6 text-slate-500 whitespace-nowrap">
+              <td class="py-4 px-6 text-slate-500 dark:text-zinc-400 whitespace-nowrap">
                 {{ formatDate(essay.createdAt) }}
               </td>
 
               <!-- Status / Nota -->
               <td class="py-4 px-6 whitespace-nowrap">
                 <div v-if="essay.status === 'GRADED' && essay.correction" class="flex items-center gap-2">
-                  <span class="font-black text-emerald-700 text-sm bg-emerald-50 px-2.5 py-1 rounded-xl border border-emerald-200">
+                  <span class="font-black text-emerald-700 text-sm bg-emerald-50 px-2.5 py-1 rounded-xl border border-emerald-200 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-400">
                     {{ essay.correction.totalScore }} / 1000
                   </span>
                 </div>
@@ -343,7 +342,7 @@ onMounted(() => {
                   type="button"
                   @click="openCorrection(essay)"
                   class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black transition"
-                  :class="essay.status === 'GRADED' ? 'bg-slate-100 text-slate-700 hover:bg-slate-200' : 'bg-purple-600 text-white hover:bg-purple-700 shadow-sm shadow-purple-600/20'"
+                  :class="essay.status === 'GRADED' ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700' : 'bg-purple-600 text-white hover:bg-purple-700 shadow-sm shadow-purple-600/20'"
                 >
                   <span class="material-symbols-rounded text-sm">
                     {{ essay.status === 'GRADED' ? 'edit' : 'rate_review' }}

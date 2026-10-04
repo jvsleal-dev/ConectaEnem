@@ -36,15 +36,18 @@ const navigation = [
     icon: 'quiz',
     to: '/admin/questoes',
     section: 'questions'
-  }
-]
-
-const users = [
+  },
   {
-    label: 'Alunos',
-    icon: 'school',
-    to: '/admin',
-    section: 'students'
+    label: 'Laboratório de Redação',
+    icon: 'edit_note',
+    to: '/admin/redacao',
+    section: 'redacao'
+  },
+  {
+    label: 'Usuários',
+    icon: 'manage_accounts',
+    to: '/admin/usuarios',
+    section: 'users'
   }
 ]
 
@@ -133,38 +136,6 @@ async function handleLogout() {
 
         <NuxtLink
           v-for="item in navigation"
-          :key="item.label"
-          :to="item.to"
-          class="admin-nav-item"
-          :class="{
-            'admin-nav-item--active': isActive(item)
-          }"
-          :title="collapsed ? item.label : undefined"
-          @click="handleItemClick(item)"
-        >
-          <span class="material-symbols-rounded admin-nav-item__icon">
-            {{ item.icon }}
-          </span>
-
-          <span
-            v-if="!collapsed"
-            class="admin-nav-item__label"
-          >
-            {{ item.label }}
-          </span>
-        </NuxtLink>
-      </div>
-
-      <div class="admin-navigation__group">
-        <span
-          v-if="!collapsed"
-          class="admin-navigation__title"
-        >
-          USUÁRIOS
-        </span>
-
-        <NuxtLink
-          v-for="item in users"
           :key="item.label"
           :to="item.to"
           class="admin-nav-item"
@@ -285,12 +256,12 @@ async function handleLogout() {
 
 .admin-brand__text strong {
   font-size: 13px;
-  color: #18181b;
+  color: var(--admin-text, #18181b);
 }
 
 .admin-brand__text small {
   font-size: 10px;
-  color: #8b8794;
+  color: var(--admin-text-muted, #8b8794);
 }
 
 .admin-sidebar__collapse {
@@ -303,7 +274,12 @@ async function handleLogout() {
   border-radius: 8px;
   background: transparent;
   cursor: pointer;
-  color: #77717f;
+  color: var(--admin-text-muted, #77717f);
+}
+
+.admin-sidebar__collapse:hover {
+  background: var(--admin-primary-soft, #f7f4fb);
+  color: var(--admin-primary, #6d28d9);
 }
 
 .admin-navigation {
@@ -322,7 +298,7 @@ async function handleLogout() {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: .12em;
-  color: #aaa5b0;
+  color: var(--admin-text-muted, #aaa5b0);
 }
 
 .admin-nav-item {
@@ -336,7 +312,7 @@ async function handleLogout() {
   border: 0;
   border-radius: 9px;
   background: transparent;
-  color: #625d69;
+  color: var(--admin-text-muted, #625d69);
   cursor: pointer;
   font-size: 12px;
   font-weight: 500;
@@ -350,40 +326,40 @@ async function handleLogout() {
 
 .admin-nav-item__icon {
   font-size: 19px;
-  color: #8b8494;
+  color: var(--admin-text-muted, #8b8494);
   flex-shrink: 0;
 }
 
 .admin-nav-item:hover {
-  background: #f7f4fb;
-  color: #6d28d9;
+  background: var(--admin-primary-soft, #f7f4fb);
+  color: var(--admin-primary, #6d28d9);
 }
 
 .admin-nav-item:hover .admin-nav-item__icon {
-  color: #6d28d9;
+  color: var(--admin-primary, #6d28d9);
 }
 
 .admin-nav-item--active {
-  background: #f3eafd;
-  color: #6d28d9;
+  background: var(--admin-primary-soft, #f3eafd);
+  color: var(--admin-primary, #6d28d9);
   font-weight: 650;
 }
 
 .admin-nav-item--active .material-symbols-rounded {
-  color: #7c3aed;
+  color: var(--admin-primary, #7c3aed);
 }
 
 .admin-nav-item--logout {
-  color: #dc2626;
+  color: #ef4444;
 }
 
 .admin-nav-item--logout:hover {
-  background: #fef2f2;
-  color: #b91c1c;
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
 }
 
 .admin-nav-item--logout:hover .admin-nav-item__icon {
-  color: #b91c1c;
+  color: #dc2626;
 }
 
 .admin-sidebar__footer {

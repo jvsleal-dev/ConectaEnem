@@ -16,27 +16,22 @@ const navigation = [
   {
     label: 'Home',
     to: '/aluno',
-    icon: 'material-symbols:home-rounded'
+    icon: 'material-symbols:home'
   },
   {
     label: 'Questões',
     to: '/aluno/questoes',
-    icon: 'material-symbols:quiz-rounded'
+    icon: 'material-symbols:quiz'
   },
   {
     label: 'Aulas',
     to: '/aluno/aulas',
-    icon: 'material-symbols:play-circle-rounded'
+    icon: 'material-symbols:play-circle'
   },
   {
     label: 'Redação',
     to: '/aluno/redacao',
-    icon: 'material-symbols:edit-note-rounded'
-  },
-  {
-    label: 'Perfil',
-    to: '/aluno/perfil',
-    icon: 'material-symbols:account-circle-rounded'
+    icon: 'material-symbols:edit-note'
   }
 ]
 
@@ -80,7 +75,7 @@ function toggle() {
     <div
       class="
         flex
-        h-[76px]
+        h-20
         shrink-0
         items-center
         border-b
@@ -175,7 +170,7 @@ function toggle() {
         @click="toggle"
       >
         <Icon
-          name="material-symbols:keyboard-double-arrow-left-rounded"
+          name="material-symbols:keyboard-double-arrow-left"
           class="text-xl"
         />
       </button>
@@ -287,8 +282,8 @@ function toggle() {
         <Icon
           :name="
             props.collapsed
-              ? 'material-symbols:keyboard-double-arrow-right-rounded'
-              : 'material-symbols:keyboard-double-arrow-left-rounded'
+              ? 'material-symbols:keyboard-double-arrow-right'
+              : 'material-symbols:keyboard-double-arrow-left'
           "
           class="text-xl"
         />

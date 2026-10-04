@@ -1,5 +1,5 @@
-import { PrismaClient } from '../../generated/prisma/client'
-import { PrismaMysql } from '@prisma/adapter-mysql'
+import { PrismaClient } from '@prisma/client'
+import { PrismaMariaDb } from '@prisma/adapter-mariadb'
 
 const globalForPrisma = globalThis
 
@@ -10,7 +10,7 @@ function createPrismaClient() {
     throw new Error('DATABASE_URL não encontrada.')
   }
 
-  const adapter = new PrismaMysql(connectionString)
+  const adapter = new PrismaMariaDb(connectionString)
 
   return new PrismaClient({
     adapter

@@ -64,55 +64,55 @@ onMounted(() => {
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <!-- ALUNOS -->
       <div
-        class="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-5 shadow-xs transition hover:border-purple-300 hover:shadow-md cursor-pointer"
-        @click="goTo('students')"
+        class="group relative overflow-hidden flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-5 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-purple-300 hover:shadow-md cursor-pointer"
+        @click="navigateTo('/admin/usuarios')"
       >
         <div class="space-y-1">
           <span class="text-xs font-bold text-zinc-400 block uppercase tracking-wider">Estudantes</span>
-          <span class="text-2xl sm:text-3xl font-black text-zinc-900">{{ stats.totalStudents }}</span>
+          <span class="text-2xl sm:text-3xl font-black text-zinc-900 group-hover:text-purple-600 transition">{{ stats.totalStudents }}</span>
         </div>
-        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all duration-200">
           <span class="material-symbols-rounded text-2xl">school</span>
         </div>
       </div>
 
       <!-- BANCO DE QUESTÕES -->
       <div
-        class="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-5 shadow-xs transition hover:border-purple-300 hover:shadow-md cursor-pointer"
+        class="group relative overflow-hidden flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-5 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-blue-300 hover:shadow-md cursor-pointer"
         @click="navigateTo('/admin/questoes')"
       >
         <div class="space-y-1">
           <span class="text-xs font-bold text-zinc-400 block uppercase tracking-wider">Questões ENEM</span>
-          <span class="text-2xl sm:text-3xl font-black text-zinc-900">{{ stats.totalQuestions }}</span>
+          <span class="text-2xl sm:text-3xl font-black text-zinc-900 group-hover:text-blue-600 transition">{{ stats.totalQuestions }}</span>
         </div>
-        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-200">
           <span class="material-symbols-rounded text-2xl">quiz</span>
         </div>
       </div>
 
       <!-- MATÉRIAS & MÓDULOS -->
       <div
-        class="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-5 shadow-xs transition hover:border-purple-300 hover:shadow-md cursor-pointer"
+        class="group relative overflow-hidden flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-5 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-md cursor-pointer"
         @click="navigateTo('/admin/materias')"
       >
         <div class="space-y-1">
           <span class="text-xs font-bold text-zinc-400 block uppercase tracking-wider">Matérias</span>
-          <span class="text-2xl sm:text-3xl font-black text-zinc-900">{{ stats.totalSubjects }}</span>
-          <span class="text-[11px] text-zinc-400 block">{{ stats.totalModules }} módulos / {{ stats.totalLessons }} aulas</span>
+          <span class="text-2xl sm:text-3xl font-black text-zinc-900 group-hover:text-emerald-600 transition">{{ stats.totalSubjects }}</span>
+          <span class="text-[11px] text-zinc-400 block font-medium">{{ stats.totalModules }} módulos / {{ stats.totalLessons }} aulas</span>
         </div>
-        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-200">
           <span class="material-symbols-rounded text-2xl">menu_book</span>
         </div>
       </div>
 
       <!-- REDAÇÕES -->
-      <div class="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-5 shadow-xs">
+      <div class="group relative overflow-hidden flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-5 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-indigo-300 hover:shadow-md">
         <div class="space-y-1">
           <span class="text-xs font-bold text-zinc-400 block uppercase tracking-wider">Redações Enviadas</span>
-          <span class="text-2xl sm:text-3xl font-black text-zinc-900">{{ stats.totalEssays }}</span>
-          <span class="text-[11px] text-zinc-400 block">{{ stats.totalTeachers }} professores ativos</span>
+          <span class="text-2xl sm:text-3xl font-black text-zinc-900 group-hover:text-indigo-600 transition">{{ stats.totalEssays }}</span>
+          <span class="text-[11px] text-zinc-400 block font-medium">{{ stats.totalTeachers }} professores ativos</span>
         </div>
-        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-200">
           <span class="material-symbols-rounded text-2xl">edit_note</span>
         </div>
       </div>
@@ -120,22 +120,22 @@ onMounted(() => {
 
     <!-- ATALHOS RÁPIDOS DE GERENCIAMENTO -->
     <div class="space-y-3 pt-2">
-      <h2 class="text-sm font-black uppercase tracking-wider text-zinc-400">
+      <h2 class="text-xs font-black uppercase tracking-wider text-zinc-400">
         Gestão Rápida
       </h2>
 
       <div class="grid gap-3 sm:grid-cols-3">
         <NuxtLink
           to="/admin/questoes"
-          class="group flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4 transition hover:border-purple-500 hover:shadow-md cursor-pointer"
+          class="group flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-purple-400 hover:shadow-md cursor-pointer"
         >
           <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-100 text-purple-700 transition group-hover:scale-105">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-100 text-purple-700 transition-transform group-hover:scale-110">
               <span class="material-symbols-rounded text-xl">quiz</span>
             </div>
             <div>
-              <h3 class="text-xs font-bold text-zinc-900 group-hover:text-purple-700 transition">Banco de Questões</h3>
-              <p class="text-[11px] text-zinc-500">Cadastrar e revisar questões</p>
+              <h3 class="text-xs font-bold text-zinc-900 group-hover:text-purple-600 transition">Banco de Questões</h3>
+              <p class="text-[11px] text-zinc-400">Cadastrar e revisar questões</p>
             </div>
           </div>
           <span class="material-symbols-rounded text-zinc-400 group-hover:text-purple-600 group-hover:translate-x-1 transition text-lg">chevron_right</span>
@@ -143,36 +143,35 @@ onMounted(() => {
 
         <NuxtLink
           to="/admin/materias"
-          class="group flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4 transition hover:border-purple-500 hover:shadow-md cursor-pointer"
+          class="group flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-400 hover:shadow-md cursor-pointer"
         >
           <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-700 transition group-hover:scale-105">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-700 transition-transform group-hover:scale-110">
               <span class="material-symbols-rounded text-xl">menu_book</span>
             </div>
             <div>
-              <h3 class="text-xs font-bold text-zinc-900 group-hover:text-purple-700 transition">Matérias & Módulos</h3>
-              <p class="text-[11px] text-zinc-500">Disciplinas e cronogramas</p>
+              <h3 class="text-xs font-bold text-zinc-900 group-hover:text-blue-600 transition">Matérias & Módulos</h3>
+              <p class="text-[11px] text-zinc-400">Disciplinas e cronogramas</p>
             </div>
           </div>
-          <span class="material-symbols-rounded text-zinc-400 group-hover:text-purple-600 group-hover:translate-x-1 transition text-lg">chevron_right</span>
+          <span class="material-symbols-rounded text-zinc-400 group-hover:text-blue-600 group-hover:translate-x-1 transition text-lg">chevron_right</span>
         </NuxtLink>
 
-        <button
-          type="button"
-          @click="goTo('students')"
-          class="group flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4 text-left transition hover:border-purple-500 hover:shadow-md cursor-pointer"
+        <NuxtLink
+          to="/admin/usuarios"
+          class="group flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-400 hover:shadow-md cursor-pointer"
         >
           <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 transition group-hover:scale-105">
-              <span class="material-symbols-rounded text-xl">school</span>
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 transition-transform group-hover:scale-110">
+              <span class="material-symbols-rounded text-xl">manage_accounts</span>
             </div>
             <div>
-              <h3 class="text-xs font-bold text-zinc-900 group-hover:text-purple-700 transition">Alunos Cadastrados</h3>
-              <p class="text-[11px] text-zinc-500">Ver estudantes e turmas</p>
+              <h3 class="text-xs font-bold text-zinc-900 group-hover:text-emerald-600 transition">Usuários Cadastrados</h3>
+              <p class="text-[11px] text-zinc-400">Ver alunos, professores e gerenciar</p>
             </div>
           </div>
-          <span class="material-symbols-rounded text-zinc-400 group-hover:text-purple-600 group-hover:translate-x-1 transition text-lg">chevron_right</span>
-        </button>
+          <span class="material-symbols-rounded text-zinc-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition text-lg">chevron_right</span>
+        </NuxtLink>
       </div>
     </div>
 
@@ -187,8 +186,8 @@ onMounted(() => {
           </div>
           <button
             type="button"
-            @click="goTo('students')"
-            class="text-xs font-bold text-purple-700 hover:underline"
+            @click="navigateTo('/admin/usuarios')"
+            class="text-xs font-bold text-purple-700 hover:underline cursor-pointer"
           >
             Ver todos
           </button>

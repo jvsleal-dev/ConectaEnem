@@ -81,10 +81,7 @@ const progress = computed(() => {
             "
           >
             <Icon
-              name="
-                material-symbols:
-                play-circle-rounded
-              "
+              name="material-symbols:play-circle"
               class="text-xl"
             />
           </div>

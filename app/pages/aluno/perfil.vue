@@ -1,6 +1,7 @@
 <script setup>
 definePageMeta({
-  layout: 'aluno'
+  layout: 'aluno',
+  middleware: 'auth'
 })
 
 useSeoMeta({

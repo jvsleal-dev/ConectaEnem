@@ -13,3 +13,14 @@
 
   --color-border: #ede9fe;
 }
+
+html.dark,
+[data-theme="dark"] {
+  --color-background: #09090b;
+  --color-background-soft: #121215;
+
+  --color-text: #fafafa;
+  --color-text-soft: #a1a1aa;
+
+  --color-border: #27272a;
+}

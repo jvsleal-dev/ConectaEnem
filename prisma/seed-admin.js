@@ -1,7 +1,6 @@
-﻿import 'dotenv/config'
+import 'dotenv/config'
 import { randomBytes, scryptSync } from 'node:crypto'
-import { PrismaClient } from '../generated/prisma/client.js'
-import { PrismaMysql } from '@prisma/adapter-mysql'
+import { PrismaClient } from '@prisma/client'
 
 function hashPassword(password) {
   const salt = randomBytes(16).toString('hex')
@@ -15,8 +14,7 @@ async function main() {
     throw new Error('DATABASE_URL não encontrada no ambiente.')
   }
 
-  const adapter = new PrismaMysql(connectionString)
-  const prisma = new PrismaClient({ adapter })
+  const prisma = new PrismaClient()
 
   const name = process.env.ADMIN_NAME || 'Administrador Conectar ENEM'
   const email = (process.env.ADMIN_EMAIL || 'oficialconectaenem@gmail.com').trim().toLowerCase()

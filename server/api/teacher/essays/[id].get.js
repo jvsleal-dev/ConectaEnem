@@ -36,7 +36,12 @@ export default defineEventHandler(async (event) => {
           code: true
         }
       },
-      correction: true
+      correction: true,
+      annotations: {
+        orderBy: {
+          createdAt: 'asc'
+        }
+      }
     }
   })
 

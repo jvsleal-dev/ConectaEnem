@@ -38,14 +38,14 @@ const initials = computed(() => {
 
 <template>
   <header
-    class="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-zinc-200 bg-white/95 px-4 backdrop-blur sm:px-6 lg:px-8"
+    class="sticky top-0 z-30 flex h-[72px] items-center justify-between border-b border-zinc-200 bg-white/95 px-4 backdrop-blur sm:px-6 lg:px-8"
   >
     <div class="flex items-center gap-4">
       <!-- Mobile toggle button -->
       <button
         type="button"
         aria-label="Abrir menu lateral"
-        class="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-xl text-zinc-600 transition hover:bg-zinc-50 lg:hidden"
+        class="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-xl text-zinc-600 transition hover:bg-zinc-50 lg:hidden cursor-pointer"
         @click="emit('open-mobile-sidebar'); emit('open-sidebar')"
       >
         <span class="material-symbols-rounded text-xl">menu</span>
@@ -66,10 +66,11 @@ const initials = computed(() => {
       </div>
     </div>
 
-    <!-- Admin User Info -->
+    <!-- Actions & Admin User Info -->
     <div
-      class="flex items-center gap-3"
+      class="flex items-center gap-3 sm:gap-4"
     >
+
       <div
         class="hidden text-right sm:block"
       >

@@ -1,5 +1,4 @@
 <script setup>
-const mascoteSrc = '/images/mascote-conectar-enem.png.png'
 </script>
 
 <template>
@@ -8,57 +7,101 @@ const mascoteSrc = '/images/mascote-conectar-enem.png.png'
     <div class="landing-orb landing-orb--two" />
     <div class="landing-grid absolute inset-0 -z-10 opacity-40" />
 
-    <div class="mx-auto grid min-h-[700px] max-w-7xl items-center gap-12 px-5 pb-16 pt-14 sm:pt-20 lg:grid-cols-[1.05fr_.95fr] lg:px-8 lg:pb-20">
+    <div class="mx-auto grid min-h-[720px] max-w-7xl items-center gap-12 px-5 pb-16 pt-14 sm:pt-20 lg:grid-cols-[1.1fr_.9fr] lg:px-8 lg:pb-24">
       <div class="max-w-2xl">
-        <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-violet-200/80 bg-white/75 px-4 py-2 text-sm font-bold text-violet-700 shadow-sm backdrop-blur">
-          <span class="h-2 w-2 rounded-full bg-emerald-500" />
-          Preparação gratuita para o ENEM
+        <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-purple-200/80 bg-white/80 px-4 py-2 text-xs sm:text-sm font-bold text-purple-700 shadow-xs backdrop-blur-md dark:border-purple-500/30 dark:bg-zinc-900/80 dark:text-purple-300">
+          <span class="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+          Plataforma 100% Gratuita & Aberta para o ENEM
         </div>
 
-        <h1 class="text-4xl font-black leading-[1.06] tracking-[-0.045em] text-zinc-950 sm:text-5xl lg:text-[4.25rem]">
-          O seu plano de estudos para chegar longe.
-          <span class="block bg-gradient-to-r from-violet-700 via-purple-600 to-fuchsia-600 bg-clip-text text-transparent">No seu ritmo.</span>
+        <h1 class="text-4xl font-black leading-[1.08] tracking-[-0.04em] text-zinc-950 sm:text-5xl lg:text-[4.25rem] dark:text-white">
+          O seu plano de estudos para alcançar a
+          <span class="block bg-gradient-to-r from-violet-700 via-purple-600 to-fuchsia-600 bg-clip-text text-transparent dark:from-violet-400 dark:via-purple-300 dark:to-fuchsia-300">Nota 1000 no ENEM.</span>
         </h1>
 
-        <p class="mt-6 max-w-xl text-lg leading-8 text-zinc-600 sm:text-xl">
-          Aulas, questões, simulados e redação em uma plataforma feita para transformar sua preparação no ENEM.
+        <p class="mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-zinc-600 dark:text-zinc-300">
+          Aulas dinâmicas, banco de questões oficiais comentadas, simulações reais e correção inteligente de redação para transformar sua jornada rumo à faculdade.
         </p>
 
-        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-          <NuxtLink to="/cadastro" class="landing-primary-button">
-            Começar gratuitamente <span aria-hidden="true">→</span>
+        <div class="mt-8 flex flex-col gap-3.5 sm:flex-row">
+          <NuxtLink to="/cadastro" class="landing-primary-button shadow-lg shadow-purple-600/25">
+            Começar Gratuitamente <span class="material-symbols-rounded text-lg">arrow_forward</span>
           </NuxtLink>
           <NuxtLink to="/login" class="landing-secondary-button">
             Já tenho uma conta
           </NuxtLink>
         </div>
 
-        <div class="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium text-zinc-600">
-          <span class="flex items-center gap-2"><b class="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-xs text-emerald-700">✓</b> 100% gratuito</span>
-          <span class="flex items-center gap-2"><b class="flex h-5 w-5 items-center justify-center rounded-full bg-violet-100 text-xs text-violet-700">✓</b> Sem assinatura</span>
-          <span class="flex items-center gap-2"><b class="flex h-5 w-5 items-center justify-center rounded-full bg-fuchsia-100 text-xs text-fuchsia-700">✓</b> Feito para o ENEM</span>
+        <div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-400">
+          <span class="flex items-center gap-2">
+            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">✓</span>
+            100% Gratuito
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-purple-100 text-xs font-bold text-purple-700 dark:bg-purple-950 dark:text-purple-400">✓</span>
+            Sem Assinaturas ou Mensalidades
+          </span>
+          <span class="flex items-center gap-2">
+            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-fuchsia-100 text-xs font-bold text-fuchsia-700 dark:bg-fuchsia-950 dark:text-fuchsia-400">✓</span>
+            Focado no ENEM & SISU
+          </span>
         </div>
       </div>
 
-      <div class="relative mx-auto w-full max-w-[540px] lg:mx-0 lg:justify-self-end">
-        <div class="hero-dashboard absolute inset-x-0 bottom-3 top-8 rounded-[2rem] border border-white/80 bg-white/70 p-5 shadow-2xl shadow-violet-950/10 backdrop-blur-md sm:p-6">
-          <div class="flex items-center justify-between">
-            <div><p class="text-xs font-bold uppercase tracking-[.16em] text-violet-500">Sua jornada</p><p class="mt-1 font-extrabold text-zinc-900">Preparação ENEM</p></div>
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100 text-lg">✦</div>
+      <!-- MOCKUP DO SISTEMA INTERATIVO -->
+      <div class="relative mx-auto w-full max-w-[520px] lg:mx-0 lg:justify-self-end">
+        <!-- Glow traseiro -->
+        <div class="absolute -inset-1.5 rounded-[2.5rem] bg-gradient-to-r from-purple-600 to-fuchsia-600 opacity-20 blur-xl dark:opacity-35"></div>
+
+        <div class="relative rounded-[2rem] border border-white/90 bg-white/90 p-6 sm:p-8 shadow-2xl shadow-purple-950/10 backdrop-blur-xl space-y-5 dark:border-zinc-800 dark:bg-zinc-900/90 dark:shadow-black/50">
+          <div class="flex items-center justify-between border-b border-zinc-100 pb-4 dark:border-zinc-800">
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-100 text-purple-700 font-bold p-1 dark:bg-zinc-800 dark:text-purple-400">
+                <img src="/images/logo conta.png" alt="Logo" class="h-full w-full object-contain" />
+              </div>
+              <div>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">Painel do Aluno</p>
+                <p class="text-sm font-black text-zinc-900 dark:text-zinc-100">Evolução de Estudos</p>
+              </div>
+            </div>
+            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 border border-emerald-100 dark:bg-emerald-950/60 dark:border-emerald-800 dark:text-emerald-400">
+              <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+              Ativo
+            </span>
           </div>
-          <div class="mt-6 rounded-2xl bg-violet-50 p-4">
-            <div class="flex items-center justify-between text-sm font-bold text-zinc-700"><span>Progresso da semana</span><span class="text-violet-700">72%</span></div>
-            <div class="mt-3 h-2.5 overflow-hidden rounded-full bg-violet-200"><div class="h-full w-[72%] rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500" /></div>
+
+          <div class="rounded-2xl bg-gradient-to-br from-purple-50 to-indigo-50/50 p-4.5 border border-purple-100/60 dark:from-zinc-800/80 dark:to-purple-950/30 dark:border-zinc-700">
+            <div class="flex items-center justify-between text-xs font-bold text-zinc-800 dark:text-zinc-200">
+              <span>Meta Semanal de Redação</span>
+              <span class="text-purple-700 font-black dark:text-purple-300">920 / 1000 pts</span>
+            </div>
+            <div class="mt-2.5 h-3 overflow-hidden rounded-full bg-purple-200/60 p-0.5 dark:bg-zinc-700">
+              <div class="h-full w-[92%] rounded-full bg-gradient-to-r from-purple-600 via-purple-500 to-emerald-500 transition-all duration-1000" />
+            </div>
           </div>
-          <div class="mt-4 grid grid-cols-2 gap-3">
-            <div class="rounded-2xl border border-zinc-100 bg-white p-3"><p class="text-2xl font-black text-zinc-900">24</p><p class="mt-1 text-xs font-medium text-zinc-500">questões feitas</p></div>
-            <div class="rounded-2xl border border-zinc-100 bg-white p-3"><p class="text-2xl font-black text-zinc-900">4h20</p><p class="mt-1 text-xs font-medium text-zinc-500">de foco hoje</p></div>
+
+          <div class="grid grid-cols-2 gap-3.5">
+            <div class="rounded-2xl border border-zinc-100 bg-white p-4 shadow-xs dark:border-zinc-800 dark:bg-zinc-950">
+              <span class="material-symbols-rounded text-purple-600 text-xl dark:text-purple-400">quiz</span>
+              <p class="text-2xl font-black text-zinc-900 mt-1 dark:text-white">128</p>
+              <p class="text-[11px] font-medium text-zinc-400">questões resolvidas</p>
+            </div>
+            <div class="rounded-2xl border border-zinc-100 bg-white p-4 shadow-xs dark:border-zinc-800 dark:bg-zinc-950">
+              <span class="material-symbols-rounded text-emerald-600 text-xl dark:text-emerald-400">timer</span>
+              <p class="text-2xl font-black text-zinc-900 mt-1 dark:text-white">18h</p>
+              <p class="text-[11px] font-medium text-zinc-400">estudo acumulado</p>
+            </div>
           </div>
-        </div>
-        <div class="relative mx-auto flex min-h-[430px] items-end justify-center sm:min-h-[500px]">
-          <div class="absolute bottom-8 h-64 w-64 rounded-full bg-fuchsia-300/40 blur-3xl" />
-          <img :src="mascoteSrc" alt="Mascote do Conectar ENEM estudando" width="576" height="576" loading="eager" fetchpriority="high" class="relative z-10 w-[88%] max-w-[450px] object-contain drop-shadow-2xl" />
-          <div class="absolute right-0 top-16 z-20 rounded-2xl border border-white/80 bg-white/90 px-4 py-3 shadow-xl shadow-violet-950/10 backdrop-blur"><p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Meta de hoje</p><p class="mt-1 text-sm font-extrabold text-violet-700">+ 3 aulas</p></div>
+
+          <div class="flex items-center justify-between rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white shadow-lg shadow-purple-600/20">
+            <div class="space-y-0.5">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-purple-200">Próxima Atividade</p>
+              <p class="text-xs sm:text-sm font-extrabold text-white">Laboratório: Repertórios de Filosofia</p>
+            </div>
+            <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-white/20 text-sm">
+              <span class="material-symbols-rounded text-base">play_arrow</span>
+            </span>
+          </div>
         </div>
       </div>
     </div>

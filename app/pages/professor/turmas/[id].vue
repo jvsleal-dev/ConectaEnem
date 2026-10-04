@@ -115,7 +115,7 @@ onMounted(() => {
     <div>
       <NuxtLink
         to="/professor"
-        class="inline-flex items-center gap-1 text-xs font-bold text-purple-700 hover:text-purple-900 transition mb-3"
+        class="inline-flex items-center gap-1 text-xs font-bold text-purple-700 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300 transition mb-3"
       >
         <span class="material-symbols-rounded text-sm">arrow_back</span>
         <span>Voltar para Turmas</span>
@@ -124,50 +124,50 @@ onMounted(() => {
 
     <!-- Skeleton Loading -->
     <div v-if="loading" class="space-y-6 animate-pulse">
-      <div class="h-32 rounded-3xl bg-slate-200"></div>
-      <div class="h-64 rounded-3xl bg-slate-100"></div>
+      <div class="h-32 rounded-3xl bg-slate-200 dark:bg-zinc-800"></div>
+      <div class="h-64 rounded-3xl bg-slate-100 dark:bg-zinc-800/60"></div>
     </div>
 
     <template v-else-if="classroom">
       <!-- Cabeçalho da Turma -->
-      <div class="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs">
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
         <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
           <div>
             <div class="flex items-center gap-2 mb-2">
-              <span class="inline-flex items-center gap-1 rounded-full bg-purple-50 px-2.5 py-0.5 text-xs font-black text-purple-700">
+              <span class="inline-flex items-center gap-1 rounded-full bg-purple-50 px-2.5 py-0.5 text-xs font-black text-purple-700 dark:bg-purple-950/70 dark:text-purple-300">
                 Código: {{ classroom.code }}
               </span>
               <span
                 v-if="classroom.isExpired"
-                class="rounded-full bg-red-50 px-2.5 py-0.5 text-[10px] font-bold text-red-700"
+                class="rounded-full bg-red-50 px-2.5 py-0.5 text-[10px] font-bold text-red-700 dark:bg-red-950/60 dark:text-red-400"
               >
                 Expirado
               </span>
               <span
                 v-else
-                class="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700"
+                class="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400"
               >
                 Ativo
               </span>
             </div>
 
-            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight dark:text-zinc-100">
               {{ classroom.name }}
             </h1>
-            <p v-if="classroom.description" class="mt-2 text-sm text-slate-600 max-w-2xl">
+            <p v-if="classroom.description" class="mt-2 text-sm text-slate-600 dark:text-zinc-400 max-w-2xl">
               {{ classroom.description }}
             </p>
           </div>
 
           <!-- Convite Box -->
-          <div class="w-full md:w-80 rounded-2xl bg-slate-50 border border-slate-200 p-3.5 space-y-2">
-            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Link de Inscrição</p>
+          <div class="w-full md:w-80 rounded-2xl bg-slate-50 border border-slate-200 p-3.5 space-y-2 dark:border-zinc-800 dark:bg-zinc-950">
+            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Link de Inscrição</p>
             <div class="flex items-center gap-2">
               <input
                 type="text"
                 readonly
                 :value="inviteLink"
-                class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-600 font-mono outline-none truncate"
+                class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-600 font-mono outline-none truncate dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-300"
               />
               <button
                 type="button"
@@ -182,23 +182,23 @@ onMounted(() => {
         </div>
 
         <!-- Meta Infos -->
-        <div class="mt-6 pt-6 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
+        <div class="mt-6 pt-6 border-t border-slate-100 dark:border-zinc-800 grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
           <div>
-            <span class="text-slate-400 font-medium">Total de Inscritos</span>
-            <p class="text-base font-black text-slate-900 mt-0.5">
+            <span class="text-slate-400 dark:text-zinc-500 font-medium">Total de Inscritos</span>
+            <p class="text-base font-black text-slate-900 dark:text-zinc-100 mt-0.5">
               {{ classroom.studentsCount }}
-              <span v-if="classroom.maxStudents" class="text-slate-400 font-normal text-xs">/ {{ classroom.maxStudents }} max</span>
+              <span v-if="classroom.maxStudents" class="text-slate-400 dark:text-zinc-500 font-normal text-xs">/ {{ classroom.maxStudents }} max</span>
             </p>
           </div>
           <div>
-            <span class="text-slate-400 font-medium">Validade do Convite</span>
-            <p class="text-xs font-bold text-slate-800 mt-1">
+            <span class="text-slate-400 dark:text-zinc-500 font-medium">Validade do Convite</span>
+            <p class="text-xs font-bold text-slate-800 dark:text-zinc-200 mt-1">
               {{ classroom.expiresAt ? formatDate(classroom.expiresAt) : 'Sem data limite (Perpétuo)' }}
             </p>
           </div>
           <div>
-            <span class="text-slate-400 font-medium">Criada em</span>
-            <p class="text-xs font-bold text-slate-800 mt-1">
+            <span class="text-slate-400 dark:text-zinc-500 font-medium">Criada em</span>
+            <p class="text-xs font-bold text-slate-800 dark:text-zinc-200 mt-1">
               {{ formatDate(classroom.createdAt) }}
             </p>
           </div>
@@ -206,30 +206,30 @@ onMounted(() => {
       </div>
 
       <!-- Lista de Alunos Inscritos -->
-      <div class="rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-xs">
-        <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+      <div class="rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+        <div class="p-6 border-b border-slate-100 dark:border-zinc-800 flex items-center justify-between">
           <div>
-            <h2 class="text-base font-black text-slate-900">Alunos Matriculados</h2>
-            <p class="text-xs text-slate-500">Lista dos alunos que entraram através do seu link de convite.</p>
+            <h2 class="text-base font-black text-slate-900 dark:text-zinc-100">Alunos Matriculados</h2>
+            <p class="text-xs text-slate-500 dark:text-zinc-400">Lista dos alunos que entraram através do seu link de convite.</p>
           </div>
-          <span class="rounded-full bg-purple-50 px-3 py-1 text-xs font-black text-purple-700">
+          <span class="rounded-full bg-purple-50 px-3 py-1 text-xs font-black text-purple-700 dark:bg-purple-950/70 dark:text-purple-300">
             {{ classroom.members?.length || 0 }} aluno(s)
           </span>
         </div>
 
         <!-- Estado vazio -->
         <div v-if="!classroom.members || classroom.members.length === 0" class="p-12 text-center">
-          <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 mb-3">
+          <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 mb-3 dark:bg-zinc-800 dark:text-zinc-500">
             <span class="material-symbols-rounded text-2xl">person_search</span>
           </div>
-          <h3 class="text-sm font-bold text-slate-700">Nenhum aluno inscrito ainda</h3>
-          <p class="mt-1 text-xs text-slate-400 max-w-sm mx-auto">
+          <h3 class="text-sm font-bold text-slate-700 dark:text-zinc-300">Nenhum aluno inscrito ainda</h3>
+          <p class="mt-1 text-xs text-slate-400 max-w-sm mx-auto dark:text-zinc-500">
             Compartilhe o link de convite com seus estudantes para que eles possam ingressar nesta turma.
           </p>
           <button
             type="button"
             @click="copyLink"
-            class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-purple-50 px-4 py-2 text-xs font-bold text-purple-700 hover:bg-purple-100 transition"
+            class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-purple-50 px-4 py-2 text-xs font-bold text-purple-700 hover:bg-purple-100 dark:bg-purple-950/60 dark:text-purple-300 dark:hover:bg-purple-900/60 transition"
           >
             <span class="material-symbols-rounded text-sm">content_copy</span>
             <span>Copiar Link de Convite</span>
@@ -239,7 +239,7 @@ onMounted(() => {
         <!-- Tabela de Alunos -->
         <div v-else class="overflow-x-auto">
           <table class="w-full text-left text-xs">
-            <thead class="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-100">
+            <thead class="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-100 dark:bg-zinc-800/60 dark:text-zinc-400 dark:border-zinc-800">
               <tr>
                 <th class="py-3.5 px-6">Aluno</th>
                 <th class="py-3.5 px-6">Email</th>
@@ -247,26 +247,26 @@ onMounted(() => {
                 <th class="py-3.5 px-6 text-right">Ações</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-slate-100 dark:divide-zinc-800">
               <tr
                 v-for="member in classroom.members"
                 :key="member.id"
-                class="hover:bg-slate-50/75 transition"
+                class="hover:bg-slate-50/75 dark:hover:bg-zinc-800/40 transition"
               >
                 <td class="py-4 px-6">
                   <div class="flex items-center gap-3">
-                    <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-100 font-black text-purple-700 text-xs">
+                    <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-100 font-black text-purple-700 text-xs dark:bg-purple-950/70 dark:text-purple-300">
                       {{ (member.student?.name || 'A').slice(0, 2).toUpperCase() }}
                     </div>
                     <div>
-                      <p class="font-bold text-slate-900 text-sm">{{ member.student?.name }}</p>
+                      <p class="font-bold text-slate-900 text-sm dark:text-zinc-100">{{ member.student?.name }}</p>
                     </div>
                   </div>
                 </td>
-                <td class="py-4 px-6 text-slate-600 font-medium">
+                <td class="py-4 px-6 text-slate-600 font-medium dark:text-zinc-400">
                   {{ member.student?.email }}
                 </td>
-                <td class="py-4 px-6 text-slate-500">
+                <td class="py-4 px-6 text-slate-500 dark:text-zinc-400">
                   {{ formatDate(member.joinedAt) }}
                 </td>
                 <td class="py-4 px-6 text-right">
@@ -274,7 +274,7 @@ onMounted(() => {
                     type="button"
                     :disabled="removingStudentId === member.student?.id"
                     @click="handleRemoveStudent(member.student)"
-                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 text-[11px] font-bold transition disabled:opacity-50"
+                    class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 text-[11px] font-bold transition disabled:opacity-50 dark:border-red-900/60 dark:text-red-400 dark:hover:bg-red-950/30"
                   >
                     <span class="material-symbols-rounded text-sm">person_remove</span>
                     <span>Remover</span>

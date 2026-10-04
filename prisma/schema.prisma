@@ -1,6 +1,5 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -43,6 +42,8 @@ model User {
   enrollments    ClassroomMember[]
   essaysSubmitted Essay[]        @relation("StudentEssays")
   essaysGraded   EssayCorrection[] @relation("TeacherCorrections")
+  lessonProgress LessonProgress[]
+  questionAnswers QuestionAnswer[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -155,6 +156,27 @@ enum EssayStatus {
   GRADED
 }
 
+enum AnnotationType {
+  DRAW
+  HIGHLIGHT
+  UNDERLINE
+  STRIKE
+  CIRCLE
+  ARROW
+  COMMENT
+}
+
+enum AnnotationCategory {
+  GRAMMAR
+  ARGUMENTATION
+  COHESION
+  REPERTOIRE
+  STRUCTURE
+  PROPOSAL
+  VOCABULARY
+  OTHER
+}
+
 model Essay {
   id             String      @id @default(uuid())
   studentId      String      @map("student_id")
@@ -166,9 +188,10 @@ model Essay {
   submissionType String      @default("TEXT") @map("submission_type")
   status         EssayStatus @default(PENDING)
 
-  student    User             @relation("StudentEssays", fields: [studentId], references: [id], onDelete: Cascade)
-  classroom  Classroom?       @relation(fields: [classroomId], references: [id], onDelete: SetNull)
-  correction EssayCorrection?
+  student     User             @relation("StudentEssays", fields: [studentId], references: [id], onDelete: Cascade)
+  classroom   Classroom?       @relation(fields: [classroomId], references: [id], onDelete: SetNull)
+  correction  EssayCorrection?
+  annotations EssayAnnotation[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -196,6 +219,16 @@ model EssayCorrection {
   c3Comment String? @db.Text @map("c3_comment")
   c4Comment String? @db.Text @map("c4_comment")
   c5Comment String? @db.Text @map("c5_comment")
+
+  justification1 String? @db.Text @map("justification_1")
+  justification2 String? @db.Text @map("justification_2")
+  justification3 String? @db.Text @map("justification_3")
+  justification4 String? @db.Text @map("justification_4")
+  justification5 String? @db.Text @map("justification_5")
+
+  positivePoints  String? @db.Text @map("positive_points")
+  improvements    String? @db.Text @map("improvements")
+  generalComment  String? @db.Text @map("general_comment")
   generalFeedback String? @db.Text @map("general_feedback")
 
   essay   Essay @relation(fields: [essayId], references: [id], onDelete: Cascade)
@@ -206,6 +239,37 @@ model EssayCorrection {
 
   @@index([teacherId])
   @@map("essay_corrections")
+}
+
+model EssayAnnotation {
+  id          String              @id @default(uuid())
+  essayId     String              @map("essay_id")
+  type        AnnotationType      @default(DRAW)
+  category    AnnotationCategory?
+  color       String              @default("#ef4444")
+  strokeWidth Float               @default(3.0) @map("stroke_width")
+
+  content     String?             @db.Text
+  selectedText String?            @db.Text @map("selected_text")
+
+  startOffset Int?                @map("start_offset")
+  endOffset   Int?                @map("end_offset")
+
+  x           Float?
+  y           Float?
+  width       Float?
+  height      Float?
+
+  points      String?             @db.LongText
+
+  essay       Essay               @relation(fields: [essayId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime            @default(now()) @map("created_at")
+  updatedAt   DateTime            @updatedAt @map("updated_at")
+
+  @@index([essayId])
+  @@index([type])
+  @@map("essay_annotations")
 }
 
 model Subject {
@@ -259,6 +323,7 @@ model Lesson {
   active      Boolean @default(true)
 
   module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress LessonProgress[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -283,6 +348,7 @@ model Question {
 
   subject Subject          @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   options QuestionOption[]
+  answers QuestionAnswer[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -308,4 +374,91 @@ model QuestionOption {
   @@unique([questionId, letter])
   @@index([questionId])
   @@map("question_options")
+}
+
+model EssayTopic {
+  id             String   @id @default(uuid())
+  title          String
+  axis           String?
+  description    String?  @db.Text
+  motivationText String?  @map("motivation_text") @db.LongText
+  imageUrl       String?  @map("image_url") @db.LongText
+  active         Boolean  @default(true)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([active])
+  @@index([axis])
+  @@map("essay_topics")
+}
+
+model EssayArgument {
+  id          String   @id @default(uuid())
+  title       String
+  axis        String?
+  content     String   @db.Text
+  application String?  @db.Text
+  active      Boolean  @default(true)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([active])
+  @@index([axis])
+  @@map("essay_arguments")
+}
+
+model EssayRepertoire {
+  id        String   @id @default(uuid())
+  title     String
+  author    String?
+  axis      String?
+  content   String   @db.Text
+  quote     String?  @db.Text
+  active    Boolean  @default(true)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([active])
+  @@index([axis])
+  @@map("essay_repertoires")
+}
+
+model LessonProgress {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  lessonId  String   @map("lesson_id")
+  completed Boolean  @default(true)
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
+  @@map("lesson_progress")
+}
+
+model QuestionAnswer {
+  id         String       @id @default(uuid())
+  userId     String       @map("user_id")
+  questionId String       @map("question_id")
+  option     OptionLetter
+  isCorrect  Boolean      @map("is_correct")
+  
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([questionId])
+  @@index([isCorrect])
+  @@map("question_answers")
 }

@@ -44,21 +44,6 @@ const mascoteSrc = '/images/mascote-conectar-enem.png.png'
           class="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-white/10 blur-2xl"
         />
 
-        <!-- Logo -->
-        <NuxtLink
-          to="/"
-          class="relative z-10 flex items-center gap-3"
-        >
-          <div
-            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl overflow-hidden bg-white/90 p-0.5 shadow-sm"
-          >
-            <img src="/images/logo conta.png" alt="Logo Conectar ENEM" class="h-full w-full object-contain" />
-          </div>
-
-          <span class="text-lg font-black">
-            Conectar ENEM
-          </span>
-        </NuxtLink>
 
         <!-- Mascote e texto -->
         <div class="relative z-10">
@@ -95,23 +80,6 @@ const mascoteSrc = '/images/mascote-conectar-enem.png.png'
         class="flex min-h-[700px] items-center bg-white p-6 sm:p-10 lg:p-12"
       >
         <div class="mx-auto w-full max-w-md">
-          <!-- Logo mobile -->
-          <NuxtLink
-            to="/"
-            class="mb-8 flex items-center gap-3 lg:hidden"
-          >
-            <div
-              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl overflow-hidden border border-purple-200 p-0.5"
-            >
-              <img src="/images/logo conta.png" alt="Logo Conectar ENEM" class="h-full w-full object-contain" />
-            </div>
-
-            <span
-              class="font-black text-[var(--color-primary-dark)]"
-            >
-              Conectar ENEM
-            </span>
-          </NuxtLink>
 
           <img
             :src="mascoteSrc"

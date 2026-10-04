@@ -1,42 +1,49 @@
+/**
+ * useTheme - Thin wrapper around @nuxtjs/color-mode (provided by @nuxt/ui)
+ *
+ * @nuxtjs/color-mode automatically manages the `dark` class on <html> and
+ * persists the preference to localStorage/cookie using the key defined in nuxt.config.js.
+ * We simply expose helpers to toggle and query the current theme.
+ */
 export function useTheme() {
-  const themeCookie = useCookie(
-    'conectar-enem-student-theme',
-    {
-      default: () => 'light',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 365
-    }
-  )
+  const colorMode = useColorMode()
 
-  const theme = useState(
-    'conectar-enem-student-theme',
-    () => {
-      return themeCookie.value === 'dark'
-        ? 'dark'
-        : 'light'
-    }
-  )
+  const isDark = computed(() => colorMode.value === 'dark')
 
-  const isDark = computed(() => {
-    return theme.value === 'dark'
-  })
+  const theme = computed(() => isDark.value ? 'dark' : 'light')
+
+  function applyThemeToDOM(val) {
+    if (import.meta.client) {
+      const root = document.documentElement
+      if (val === 'dark') {
+        root.classList.add('dark')
+        root.setAttribute('data-theme', 'dark')
+      } else {
+        root.classList.remove('dark')
+        root.setAttribute('data-theme', 'light')
+      }
+    }
+  }
 
   function setTheme(value) {
-    const nextTheme =
-      value === 'dark'
-        ? 'dark'
-        : 'light'
-
-    theme.value = nextTheme
-    themeCookie.value = nextTheme
+    const next = value === 'dark' ? 'dark' : 'light'
+    colorMode.preference = next
+    applyThemeToDOM(next)
   }
 
   function toggleTheme() {
-    setTheme(
-      theme.value === 'dark'
-        ? 'light'
-        : 'dark'
-    )
+    setTheme(isDark.value ? 'light' : 'dark')
+  }
+
+  // Ensure DOM stays in sync on mount (handles SSR hydration & initial page load)
+  if (import.meta.client) {
+    onMounted(() => {
+      applyThemeToDOM(colorMode.value === 'dark' ? 'dark' : 'light')
+    })
+
+    watch(() => colorMode.value, (val) => {
+      applyThemeToDOM(val === 'dark' ? 'dark' : 'light')
+    })
   }
 
   return {
