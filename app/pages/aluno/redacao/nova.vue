@@ -44,6 +44,9 @@ const fontSize = ref(15) // em px
 const loadingClassrooms = ref(true)
 const showMotivatorModal = ref(false)
 const showConnectorsDrawer = ref(false)
+const errorMessage = ref('')
+const submitting = ref(false)
+const successSubmitted = ref(false)
 
 const strategicConnectors = [
   {
