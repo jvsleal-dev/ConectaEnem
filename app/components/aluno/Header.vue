@@ -42,7 +42,7 @@ onMounted(() => {
           class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-[var(--student-surface-secondary)] border border-[var(--student-border)] shadow-xs"
         >
           <img
-            src="/images/icone mobile.png"
+            src="/images/logo conta.png"
             alt="Logo Conectar ENEM"
             class="h-full w-full object-contain"
           />

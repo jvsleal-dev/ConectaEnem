@@ -88,7 +88,7 @@ async function handleLogout() {
       >
         <span class="w-11 h-11 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-zinc-800/80 border border-slate-200/60 dark:border-zinc-700/50 shrink-0 overflow-hidden p-0.5">
           <img
-            src="/images/icone mobile.png"
+            src="/images/logo conta.png"
             alt="Logo Conectar ENEM"
             class="h-full w-full object-contain"
           />

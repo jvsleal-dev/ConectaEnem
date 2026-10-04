@@ -115,7 +115,7 @@ function toggle() {
           "
         >
           <img
-            src="/images/icone mobile.png"
+            src="/images/logo conta.png"
             alt="Logo Conectar ENEM"
             class="h-full w-full object-contain"
           />

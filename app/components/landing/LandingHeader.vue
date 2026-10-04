@@ -32,7 +32,7 @@ async function handleInstall() {
         <div
           class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl overflow-hidden border border-purple-100 dark:border-zinc-800 shadow-sm p-0.5 bg-white dark:bg-zinc-900"
         >
-          <img src="/images/icone mobile.png" alt="Logo Conectar ENEM" class="h-full w-full object-contain" />
+          <img src="/images/logo conta.png" alt="Logo Conectar ENEM" class="h-full w-full object-contain" />
         </div>
 
         <span

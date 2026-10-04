@@ -1,7 +1,15 @@
 <script setup>
 import { usePwaInstall } from '~/composables/usePwaInstall'
 
-const { isInstalled, promptInstall } = usePwaInstall()
+const { isInstalled, isIos, promptInstall } = usePwaInstall()
+const showInstallModal = ref(false)
+
+async function handleInstallHero() {
+  const result = await promptInstall()
+  if (!result) {
+    showInstallModal.value = true
+  }
+}
 </script>
 
 <template>
@@ -31,17 +39,13 @@ const { isInstalled, promptInstall } = usePwaInstall()
             Começar Gratuitamente <span class="material-symbols-rounded text-lg">arrow_forward</span>
           </NuxtLink>
           <button
-            v-if="!isInstalled"
             type="button"
-            @click="promptInstall"
-            class="landing-secondary-button cursor-pointer flex items-center gap-2"
+            @click="handleInstallHero"
+            class="landing-secondary-button cursor-pointer flex items-center justify-center gap-2"
           >
             <span class="material-symbols-rounded text-xl text-purple-600 dark:text-purple-400">download</span>
             <span>Baixar App</span>
           </button>
-          <NuxtLink v-else to="/login" class="landing-secondary-button">
-            Já tenho uma conta
-          </NuxtLink>
         </div>
 
         <div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-400">
@@ -69,7 +73,7 @@ const { isInstalled, promptInstall } = usePwaInstall()
           <div class="flex items-center justify-between border-b border-zinc-100 pb-4 dark:border-zinc-800">
             <div class="flex items-center gap-3">
               <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-100 text-purple-700 font-bold p-1 dark:bg-zinc-800 dark:text-purple-400">
-                <img src="/images/icone mobile.png" alt="Logo" class="h-full w-full object-contain" />
+                <img src="/images/logo conta.png" alt="Logo" class="h-full w-full object-contain" />
               </div>
               <div>
                 <p class="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">Painel do Aluno</p>
@@ -117,5 +121,65 @@ const { isInstalled, promptInstall } = usePwaInstall()
         </div>
       </div>
     </div>
+
+    <!-- MODAL DE INSTRUÇÕES DE INSTALAÇÃO DO APP -->
+    <Teleport to="body">
+      <div
+        v-if="showInstallModal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/70 p-4 backdrop-blur-xs"
+        @click.self="showInstallModal = false"
+      >
+        <div class="relative w-full max-w-md rounded-3xl bg-white dark:bg-zinc-900 p-6 sm:p-7 shadow-2xl border border-purple-100 dark:border-zinc-800 space-y-4">
+          <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 dark:bg-zinc-800 p-1">
+                <img src="/images/icone mobile.png" alt="App Icon" class="h-full w-full object-contain" />
+              </div>
+              <div>
+                <h3 class="text-sm font-black text-zinc-900 dark:text-white">Instalar Conectar ENEM</h3>
+                <p class="text-[11px] text-purple-600 dark:text-purple-400 font-bold">App Oficial no seu celular ou PC</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              @click="showInstallModal = false"
+              class="h-8 w-8 rounded-full text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-700 flex items-center justify-center transition cursor-pointer"
+            >
+              <span class="material-symbols-rounded text-xl">close</span>
+            </button>
+          </div>
+
+          <div class="space-y-3 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            <p v-if="isIos">
+              No seu <strong>iPhone/iPad (Safari)</strong>:
+            </p>
+            <ol v-if="isIos" class="list-decimal pl-4 space-y-1.5 font-medium">
+              <li>Toque no botão de <strong>Compartilhar</strong> (ícone do quadrado com seta para cima na barra inferior).</li>
+              <li>Role para baixo e selecione <strong>"Adicionar à Tela de Início"</strong>.</li>
+              <li>Toque em <strong>Adicionar</strong> no canto superior direito.</li>
+            </ol>
+
+            <p v-else>
+              Para adicionar o aplicativo à sua tela inicial:
+            </p>
+            <ol v-if="!isIos" class="list-decimal pl-4 space-y-1.5 font-medium">
+              <li>No menu do seu navegador (três pontinhos no topo ou barra de endereços).</li>
+              <li>Clique em <strong>"Instalar aplicativo"</strong> ou <strong>"Adicionar à tela inicial"</strong>.</li>
+              <li>Pronto! O app será instalado e você permanecerá logado diretamente nele.</li>
+            </ol>
+          </div>
+
+          <div class="pt-2 flex justify-end">
+            <button
+              type="button"
+              @click="showInstallModal = false"
+              class="rounded-xl bg-purple-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-purple-700 transition cursor-pointer"
+            >
+              Entendido
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </section>
 </template>
