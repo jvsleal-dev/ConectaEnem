@@ -45,6 +45,7 @@
 
   background:
     var(--student-bg);
+  background-image: none !important;
 
   color:
     var(--student-text);

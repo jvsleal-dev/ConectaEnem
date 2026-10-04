@@ -1062,8 +1062,8 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-/* Folha Pautada com Espaço Amplo (30 Linhas x 32px = 960px) */
-.lined-editor-exact {
+/* Folha Pautada com Espaço Amplo (30 Linhas x 32px = 960px) apenas no textarea */
+textarea.lined-editor-exact {
   display: block;
   width: 100%;
   line-height: 32px !important;
@@ -1086,8 +1086,8 @@ onUnmounted(() => {
   box-sizing: border-box;
 }
 
-:global(html.dark) .lined-editor-exact,
-:global([data-theme="dark"]) .lined-editor-exact {
+:global(html.dark) textarea.lined-editor-exact,
+:global([data-theme="dark"]) textarea.lined-editor-exact {
   color: #fafafa !important;
   background-image: repeating-linear-gradient(
     to bottom,
@@ -1098,13 +1098,13 @@ onUnmounted(() => {
   );
 }
 
-.lined-editor-exact::placeholder {
+textarea.lined-editor-exact::placeholder {
   color: #94a3b8;
   line-height: 32px !important;
 }
 
-:global(html.dark) .lined-editor-exact::placeholder,
-:global([data-theme="dark"]) .lined-editor-exact::placeholder {
+:global(html.dark) textarea.lined-editor-exact::placeholder,
+:global([data-theme="dark"]) textarea.lined-editor-exact::placeholder {
   color: #71717a;
 }
 </style>
