@@ -30,26 +30,26 @@ function handleLogin(credentials) {
   >
     <!-- Luzes de fundo -->
     <div
-      class="absolute -left-40 top-20 h-96 w-96 rounded-full bg-purple-300/20 blur-3xl"
+      class="absolute -left-40 top-20 h-96 w-96 rounded-full bg-purple-600/15 blur-3xl pointer-events-none"
     />
 
     <div
-      class="absolute -right-40 bottom-10 h-96 w-96 rounded-full bg-fuchsia-300/20 blur-3xl"
+      class="absolute -right-40 bottom-10 h-96 w-96 rounded-full bg-fuchsia-600/15 blur-3xl pointer-events-none"
     />
 
     <!-- Card principal -->
     <div
-      class="relative grid w-full max-w-5xl overflow-hidden rounded-3xl border border-purple-100 bg-white shadow-2xl shadow-purple-500/10 lg:grid-cols-[1fr_1.05fr]"
+      class="relative grid w-full max-w-5xl overflow-hidden rounded-3xl border border-zinc-800/80 bg-[#121215] shadow-2xl shadow-purple-950/40 lg:grid-cols-[1fr_1.05fr]"
     >
       <!-- ============================= -->
       <!-- LADO ESQUERDO -->
       <!-- ============================= -->
 
       <section
-        class="relative hidden min-h-[650px] overflow-hidden bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] p-10 text-white lg:flex lg:flex-col lg:justify-between"
+        class="relative hidden min-h-[650px] overflow-hidden bg-gradient-to-br from-purple-950 via-purple-900 to-indigo-950 p-10 text-white lg:flex lg:flex-col lg:justify-between border-r border-zinc-800/50"
       >
         <div
-          class="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-white/10 blur-2xl"
+          class="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-purple-500/20 blur-2xl pointer-events-none"
         />
 
 
@@ -60,20 +60,20 @@ function handleLogin(credentials) {
             alt="Mascote do Conectar ENEM"
             width="360"
             height="360"
-            class="mx-auto w-full max-w-[330px] object-contain"
+            class="mx-auto w-full max-w-[330px] object-contain drop-shadow-xl"
           >
 
-          <h2 class="mt-6 text-3xl font-black leading-tight">
+          <h2 class="mt-6 text-3xl font-black leading-tight text-white">
             Continue conectado ao seu futuro.
           </h2>
 
-          <p class="mt-4 max-w-md leading-7 text-purple-100">
+          <p class="mt-4 max-w-md leading-7 text-purple-200/90">
             Estude, pratique, escreva redações e acompanhe sua
             evolução em um só lugar.
           </p>
         </div>
 
-        <p class="relative z-10 text-sm text-purple-200">
+        <p class="relative z-10 text-sm text-purple-300/70">
           Preparação gratuita para o ENEM.
         </p>
       </section>
@@ -83,7 +83,7 @@ function handleLogin(credentials) {
       <!-- ============================= -->
 
       <section
-        class="flex min-h-[650px] items-center bg-white p-6 sm:p-10 lg:p-12"
+        class="flex min-h-[650px] items-center bg-[#18181b] p-6 sm:p-10 lg:p-12"
       >
         <div class="mx-auto w-full max-w-md">
 

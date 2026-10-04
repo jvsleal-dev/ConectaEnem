@@ -1,6 +1,7 @@
 <template>
   <div
-    class="min-h-screen bg-gradient-to-br from-purple-50 via-white to-fuchsia-50"
+    class="min-h-screen bg-[#09090b] text-zinc-100"
+    data-theme="dark"
   >
     <slot />
   </div>

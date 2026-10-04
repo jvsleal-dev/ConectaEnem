@@ -103,19 +103,19 @@ async function handleSubmit() {
     <div>
       <div
         v-if="isTeacher"
-        class="mb-4 inline-flex rounded-full bg-purple-50 px-3 py-1.5 text-xs font-bold text-[var(--color-primary)]"
+        class="mb-4 inline-flex rounded-full bg-purple-950/70 border border-purple-800 px-3 py-1.5 text-xs font-bold text-purple-300"
       >
         Professor de Redação
       </div>
 
       <h1
-        class="text-2xl font-black tracking-tight text-zinc-900 sm:text-3xl"
+        class="text-2xl font-black tracking-tight text-white sm:text-3xl"
       >
         {{ title }}
       </h1>
 
       <p
-        class="mt-2 text-sm leading-6 text-zinc-500"
+        class="mt-2 text-sm leading-6 text-zinc-400"
       >
         {{ description }}
       </p>
@@ -125,7 +125,7 @@ async function handleSubmit() {
     <div class="space-y-2">
       <label
         for="login-email"
-        class="text-sm font-semibold text-zinc-700"
+        class="text-sm font-semibold text-zinc-300"
       >
         Email
       </label>
@@ -137,7 +137,7 @@ async function handleSubmit() {
         autocomplete="email"
         required
         placeholder="seuemail@exemplo.com"
-        class="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-purple-100"
+        class="w-full rounded-xl border border-zinc-700 bg-zinc-900/90 px-4 py-3 text-white outline-none transition placeholder:text-zinc-500 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20"
       >
     </div>
 
@@ -146,7 +146,7 @@ async function handleSubmit() {
       <div class="flex items-center justify-between">
         <label
           for="login-password"
-          class="text-sm font-semibold text-zinc-700"
+          class="text-sm font-semibold text-zinc-300"
         >
           Senha
         </label>
@@ -160,12 +160,12 @@ async function handleSubmit() {
           autocomplete="current-password"
           required
           placeholder="Digite sua senha"
-          class="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 pr-20 text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-purple-100"
+          class="w-full rounded-xl border border-zinc-700 bg-zinc-900/90 px-4 py-3 pr-20 text-white outline-none transition placeholder:text-zinc-500 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20"
         >
 
         <button
           type="button"
-          class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-zinc-500 transition hover:text-[var(--color-primary)]"
+          class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-zinc-400 transition hover:text-purple-400 cursor-pointer"
           @click="showPassword = !showPassword"
         >
           {{ showPassword ? 'Ocultar' : 'Mostrar' }}
@@ -176,7 +176,7 @@ async function handleSubmit() {
     <!-- Erro -->
     <div
       v-if="error"
-      class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
+      class="rounded-xl border border-red-900/60 bg-red-950/40 px-4 py-3 text-sm text-red-400"
     >
       {{ error }}
     </div>
@@ -185,7 +185,7 @@ async function handleSubmit() {
     <button
       type="submit"
       :disabled="loading"
-      class="w-full rounded-xl bg-[var(--color-primary)] px-5 py-3.5 font-bold text-white shadow-lg shadow-purple-500/20 transition hover:-translate-y-0.5 hover:bg-[var(--color-primary-dark)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+      class="w-full rounded-xl bg-purple-600 px-5 py-3.5 font-bold text-white shadow-lg shadow-purple-900/40 transition hover:-translate-y-0.5 hover:bg-purple-500 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 cursor-pointer"
     >
       {{ buttonText }}
     </button>
@@ -193,13 +193,13 @@ async function handleSubmit() {
     <!-- Cadastro somente para aluno -->
     <p
       v-if="!isTeacher"
-      class="text-center text-sm text-zinc-500"
+      class="text-center text-sm text-zinc-400"
     >
       Ainda não possui uma conta?
 
       <NuxtLink
         to="/cadastro"
-        class="font-bold text-[var(--color-primary)] transition hover:text-[var(--color-primary-dark)]"
+        class="font-bold text-purple-400 transition hover:text-purple-300 ml-1"
       >
         Criar conta
       </NuxtLink>
